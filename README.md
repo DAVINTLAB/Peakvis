@@ -1,4 +1,4 @@
-# Peakvis
+# Peakvis --EM DESENVOLVIMENTO--
 
 ## Introdução
 PeakVis é uma ferramente de vizualização, ***ainda em desenvolvimento***. Nela é possivel carregar o video gravado de uma transmissão ao vivo junto com os _tweets_, comentarios de 288 caracteres feitos na rede social _Twitter_, relacionados ao programa gravado. Feito isso o PeakVis gera diversos graficos rsponsivos ao programa de televisão recebido, entre esses gráficos estão o fluxo de dados e os autores dos _tweets_ mais citados durante o tempo da transmissão. Junto com os gráficos há a transmissão em si adjacente à um quadro com os _tweets_ do momento atual do vídeo.
