@@ -9,7 +9,9 @@ PeakVis é uma ferramente de vizualização, ***ainda em desenvolvimento***. Nel
  - NodeJs (https://nodejs.org/pt-br/download/)
  
 ## Instalação
- - Após ter baixado os arquivos do diretório e baixado as depencias, Vá na pasta "bin" e rode o arquivo "VisualizadorDAVINT.exe". 
+ - Após ter baixado os arquivos do diretório e baixado as depencias, Abra a pasta "bin\DATA\videos" e adicione o SeuVideo.mp4
+ - Abra também a pasta "bin\DATA\dados" e adicione o SeuDataset.json
+ - Vá na pasta "bin" e rode o arquivo "VisualizadorDAVINT.exe". 
 ![alt text](https://media.discordapp.net/attachments/511284977409851402/725458375676264568/unknown.png)
  - Isso ira abrir a interface inicial do PeakVis.
 ![alt text](https://media.discordapp.net/attachments/511284977409851402/725458008666013796/unknown.png)
@@ -20,12 +22,13 @@ PeakVis é uma ferramente de vizualização, ***ainda em desenvolvimento***. Nel
  - Agora já pode clicar no botão "Fechar" na janela "Ajuda".
  ![alt text](https://media.discordapp.net/attachments/511284977409851402/725459031388586014/unknown.png)
  
+ 
  ## Execução
  - Apos instalar basta clicar em "Inicia" na janela "DAVINT Demo 1.0", caso tenha fechado o aplicativo, basta abrir novamente.
  ![alt text](https://media.discordapp.net/attachments/511284977409851402/725460151875797144/unknown.png)
  - O PeakVis vai abrir em uma nova aba de seu navegador.
- ![alt text](https://media.discordapp.net/attachments/511284977409851402/725460333942145044/unknown.png?width=1442&height=293)
- - Para ver os graficos e o video agora é apenas clicas em "Subimit".
+ - digite o nome do SeuVideo.mp4 no campo do video e o SeuDataset.json no campo de data, após isso basta clicas em "Subimit".
+![alt text](https://media.discordapp.net/attachments/511284977409851402/725470379564335196/unknown.png?width=1442&height=319)
  
  ## Funcionalidades
  - A Primeira funcioanlidade é a rigorosidade dos _Highlights_
