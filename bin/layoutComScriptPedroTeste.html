@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="picassoBackup.css">
+</head>
+<style>
+    .axis {
+        font: 10px sans-serif;
+    }
+
+    .axis path,
+    .axis line {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+    }
+
+    .axis--y path {
+        display: none;
+    }
+
+    .bar {
+        fill: #7200ac;
+        fill-opacity: .9;
+    }
+
+    .wld {
+        fill: #0bb6e0;
+    }
+
+    .chart-title {
+        margin-bottom: 0;
+    }
+
+    .source {
+        margin-top: 0;
+        font-size: 11px;
+    }
+
+    .center {
+        margin: auto;
+        width: 15%;
+        border: 3px solid #73AD21;
+        padding: 10px;
+    }
+</style>
+
+<body>
+    <script src="//d3js.org/d3.v4.0.0-alpha.28.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/6.2.1/math.js"></script>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="layout.html"></a>
+        <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Visualization</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#"> A M B I E N T E D E T E S T E</a>
+                </li>
+            </ul>
+            <div class="form-inline my-2 my-lg-0">
+                <button class="btn btn-dark" onclick="pagGithub()">
+                    <span class="icon">
+                        <i class="fa fa-github"></i>
+                    </span>
+                    <span>
+                        GitHub
+                    </span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <form name="formulario">
+        <div class="row">
+            <div class="col">
+                <input name="dadoss" type="text" class="form-control" placeholder="Data">
+            </div>
+            <div class="col">
+                <input name="videoo" type="text" class="form-control" placeholder="Video">
+            </div>
+            <!--             <div class="col">
+                <input name="frequenciaa" type="text" class="form-control" placeholder="Frequência (em minutos)">
+            </div> -->
+        </div>
+        <button type="submit" class="btn btn-primary" onclick="plot(); return false">Submit</button>
+    </form>
+    <input type="range" min="1" max="10" value="8" class="slider" id="slaider">
+    <button class="btn btn-warning" id="wtfbro">Highlight</button>
+    <div id="plotly_div_id"></div>
+    <div class="row">
+        <div class="col-lg-6">
+            <div id="video_container"></div>
+        </div>
+        <div class="col-lg-6">
+            <div id="plot_tweets" style="width:100%;height:500px;background-color:powderblue;overflow:scroll;"></div>
+        </div>
+    </div>
+    <div id="plotly_div_id_2"></div>
+
+    </br>
+    <div class="wrapper">
+        <div class="chart"></div>
+    </div>
+    <div id="userranking" class="center"></div>
+
+    <script>
+        const margin = { top: 20, right: 30, bottom: 40, left: 260 };
+        const width = 960 - margin.left - margin.right;
+        const height = 400 - margin.top - margin.bottom;
+        const percentFormat = d3.format('.0%');
+        const leftPadding = 5;
+
+        const delay = function (d, i) {
+            return i * 40;
+        };
+
+        function sortData(data) {
+            return data.sort((a, b) => b.value - a.value);
+        }
+
+        function xAccessor(d) {
+            return d.value;
+        }
+
+        function yAccessor(d) {
+            return d.usuario;
+        }
+
+        const xScale = d3.scaleLinear()
+            .range([0, width])
+            //ARRUMAR O VALOR DO EIXO
+            //COLOCAR UM VALOR MAXIMO +10% DELE MESMO
+            .domain([0, 20000]);
+
+        const yScale = d3.scaleBand()
+            .rangeRound([0, height], 0.1)
+            .padding(0.1);
+
+        function drawXAxis(el) {
+            el.append('g')
+                .attr('class', 'axis axis--x')
+                .attr('transform', `translate(${leftPadding},${height})`)
+                .call(d3.axisBottom(xScale).tickFormat(d3.format(".0f")));
+        }
+
+        function drawYAxis(el, data, t) {
+            let axis = el.select('.axis--y');
+            if (axis.empty()) {
+                axis = el.append('g')
+                    .attr('class', 'axis axis--y');
+            }
+
+            axis.transition(t)
+                .call(d3.axisLeft(yScale))
+                .selectAll('g')
+                .delay(delay);
+        }
+
+        function drawBars(el, data, t) {
+            let barsG = el.select('.bars-g');
+            if (barsG.empty()) {
+                barsG = el.append('g')
+                    .attr('class', 'bars-g');
+            }
+
+            const bars = barsG
+                .selectAll('.bar')
+                .data(data, yAccessor);
+            bars.exit()
+                .remove();
+            bars.enter()
+                .append('rect')
+                .attr('class', 'bar')
+                .attr('x', leftPadding)
+                .merge(bars).transition(t)
+                .attr('y', d => yScale(yAccessor(d)))
+                .attr('width', d => xScale(xAccessor(d)))
+                .attr('height', yScale.bandwidth())
+                .delay(delay);
+        }
+
+        const svg = d3.select('.chart').append('svg')
+            .attr('width', width + margin.left + margin.right)
+            .attr('height', height + margin.top + margin.bottom)
+            .append('g')
+            .attr('transform', `translate(${margin.left},${margin.top})`);
+
+        function pagGithub() {
+            window.location.assign("https://github.com/DAVINTLAB");
+        }
+
+        function plotVideo() {
+            sessionStorage.nomeVideo = document.formulario.videoo.value;
+            $("#video_container").load("loadVideo.html");
+        }
+
+        Date.prototype.addHours = function (h) {
+            this.setHours(this.getHours() + h);
+            return this;
+        }
+
+        function containsUsername(username, list) {
+            var i;
+            for (i = 0; i < list.length; i++) {
+                if (list[i].username === username) {
+                    return { exists: true, index: i };
+                }
+            }
+            return { exists: false, index: 0 };
+        }
+
+        function plot() {
+            d3.json("/DATA/dados/" + document.formulario.dadoss.value, function (data) {
+
+                //criação dos eixos X e Y
+                horariosData = data;
+                var horarios = [];
+                var users = [];
+                var ex = [];
+                var ey = [];
+                let tweets = [];
+                let infos = [];
+                var count = 0;
+                /*                 for (let i = 1; i < 10; i++) {
+                                    console.log(math.quantileSeq(ARRAY AQUI, i / 10));
+                                } */
+                for (var i = horariosData.length - 1; i >= 0; i--) {
+                    horarios.push(new Date(horariosData[i].created_at));
+                }
+
+                var started_time = new Date(JSON.parse(JSON.stringify(horarios[0])));
+                //started_time.setSeconds(started_time.getSeconds() + parseInt(document.formulario.frequenciaa.value, 10));
+                started_time.setSeconds(started_time.getSeconds() + 1);
+                for (var i = 0; i < horarios.length; i++) {
+                    if (horarios[i] >= started_time) {
+                        ey.push(count);
+                        count = 1;
+                        started_time = new Date(JSON.parse(JSON.stringify(horarios[i])));
+                        ex.push(started_time);
+                        tweets.push(horariosData[horarios.length - i - 1].text + "         [" + horariosData[horarios.length - i - 1].created_at + "]");
+                        infos.push("https://twitter.com/" + horariosData[horarios.length - i - 1].username + "/status/" + horariosData[horarios.length - i - 1].id)
+                        //started_time.setSeconds(started_time.getSeconds() + parseInt(document.formulario.frequenciaa.value, 10));
+                        started_time.setSeconds(started_time.getSeconds() + 1);
+                    } else {
+                        count = count + 1;
+                    }
+                }
+
+                let testeA = [];
+                let testeB = [];
+                let count2 = 0;
+
+                let testeC = new Date(JSON.parse(JSON.stringify(horarios[0])));
+                testeC.setSeconds(testeC.getSeconds() + 30);
+                for (let i = 0; i < horarios.length; i++) {
+                    if (horarios[i] >= testeC) {
+                        testeB.push(count2);
+                        count2 = 1;
+                        testeC = new Date(JSON.parse(JSON.stringify(horarios[i])));
+                        testeA.push(testeC);
+                        testeC.setSeconds(testeC.getSeconds() + 30);
+                    } else {
+                        count2 = count2 + 1;
+                    }
+                }
+                //plot do grafico
+                let plotDiv = document.getElementById("plotly_div_id");
+                let plotDiv2 = document.getElementById("plotly_div_id_2");
+                //===================== Arrumar depois =======================
+                let respX = [0];
+                let respY = [];
+                for (let i = 1; i < testeB.length; i++) {
+                    respX[i] = i;
+                    if (testeB[i] > testeB[i - 1]) {
+                        respY[i] = 1;
+                    } else {
+                        respY[i] = 0;
+                    }
+                }
+
+                let sorti = JSON.parse(JSON.stringify(testeB)).sort((a, b) => a - b);
+                let reskein = math.quantileSeq(sorti, document.getElementById("slaider").value / 10)
+                let mediaAS = data.length / testeB.length;
+                let marcadores = [];
+                let arrResp = [];
+                for (let i = 1; i < respY.length; i++) {
+                    if ((respY[i] == 1 && respY[i - 1] == 0) || (respY[i] == 0 && respY[i - 1] == 1 && marcadores.length % 2 != 0)) {
+                        marcadores.push(i - 1);
+                    }
+                }
+
+                for (let i = 0; i < marcadores.length - 1; i++) {
+                    if (testeB[marcadores[i + 1]] - testeB[marcadores[i]] > mediaAS) {
+                        arrResp.push(marcadores[i] * 30);
+                    }
+                }
+                document.getElementById("slaider").oninput = function () {
+                    arrResp = [];
+                    let reskein = math.quantileSeq(sorti, document.getElementById("slaider").value / 10)
+                    for (let i = 0; i < marcadores.length - 1; i++) {
+                        if (testeB[marcadores[i + 1]] - testeB[marcadores[i]] > reskein) {
+                            arrResp.push(marcadores[i] * 30);
+                        }
+                    }
+                    respX = [];
+                    respY = [];
+                    for (let i = 0; i < arrResp.length; i++) {
+                        respX[i] = ex[arrResp[i]];
+                        respY[i] = ey[arrResp[i]];
+                    }
+
+                    g3 = {
+                        x: respX,
+                        y: respY,
+                        name: 'Início dos Picos',
+                        mode: 'markers',
+                        marker: {
+                            size: 10,
+                            color: '#420ffa'
+                        }
+                    }
+                    var data = [g1, g2, g3];
+                    indice = arrResp.length;
+                    Plotly.newPlot(plotDiv, data);
+                };
+                //============================================================
+                let dataBarPlot = [];
+                for (let j = 0; j < 10; j++) {
+                    let value = 0;
+                    let aux = " ";
+                    const newEntry = {
+                        value,
+                        usuario: aux
+                    };
+                    dataBarPlot.push(newEntry);
+                }
+
+                let cnt = 0;
+                let indice = arrResp.length;
+                let flag = 0;
+                let taPausado = true;
+                let media = 0;
+                let eixox = [];
+                let eixoy = [];
+
+                let g1 = {
+                    x: ex,
+                    y: ey,
+                    mode: 'lines',
+                    name: 'Tweets',
+                    line: { color: '#80CAF6' }
+                }
+
+                let g2 = {
+                    x: [ex[0]],
+                    y: [ey[0]],
+                    mode: 'lines',
+                    name: 'Progresso',
+                    line: { color: '#E80505' }
+                }
+
+                respX = [];
+                respY = [];
+                for (let i = 0; i < arrResp.length; i++) {
+                    respX[i] = ex[arrResp[i]];
+                    respY[i] = ey[arrResp[i]];
+                }
+
+                let g3 = {
+                    x: respX,
+                    y: respY,
+                    name: 'Início dos Picos',
+                    mode: 'markers',
+                    marker: {
+                        size: 10,
+                        color: '#420ffa'
+                    }
+                }
+
+                var data = [g1, g2, g3];
+                var block_idx = horariosData.length - 1;
+                var userlist = []
+                Plotly.newPlot(plotDiv, data);
+                plotVideo();
+
+                var interval = setInterval(function () {
+
+                    if (!taPausado) {
+                        var time = ex[cnt];
+                        var tweets_block = []
+                        //var curdate;
+
+                        eixox.push(time);
+                        eixoy.push(ey[cnt]);
+
+                        if (cnt == 0) {
+                            curdate = new Date(horariosData[horariosData.length - 1].created_at);
+
+                            //curdate.addHours(3);
+                            //curdate_str = horariosData[0].created_at
+                            //curdate_str = strftime('%Y-%m-%dT%H:%M:%SZ', curdate)
+                            //console.log(curdate)
+
+                            //curdate = new Date(curdate.setSeconds(curdate.getSeconds() + 1))
+                            //curdate_str = strftime('%Y-%m-%dT%H:%M:%SZ', curdate)
+                            //console.log(curdate)
+
+                            for (let i = block_idx; i > 0; i--) {
+                                fdate = new Date(horariosData[i].created_at)
+                                if (fdate.getTime() == curdate.getTime()) {
+                                    tweets_block.push(horariosData[i]);
+                                } else {
+                                    block_idx = i;
+                                    break;
+                                }                              
+                            }
+
+                            for (index = 0; index < tweets_block.length; ++index) {                               
+                                var contains = containsUsername(tweets_block[index].username, userlist)
+                                if (contains.exists == true) {
+                                    userlist[contains.index].retweets = parseInt(userlist[contains.index].retweets) + parseInt(tweets_block[index].retweets)
+                                } else {
+                                    userlist.push(tweets_block[index])
+                                }
+                            }
+
+                            var sorted_ulist = userlist.sort((a, b) => b.retweets - a.retweets);
+
+                            var str_amigo = "";
+                            for (index = 0; index < 10; ++index) {
+                                //dataBarPlot[index].value = sorted_ulist[index].retweets/Math.pow(10, (sorted_ulist[index].retweets+"").length);
+                                dataBarPlot[index].value = sorted_ulist[index].retweets;
+                                dataBarPlot[index].usuario = sorted_ulist[index].username;
+                                str_amigo += sorted_ulist[index].username + " : " + sorted_ulist[index].retweets + "<br>"
+                            }
+                            var div = document.getElementById('userranking');
+                            div.innerHTML = str_amigo;
+
+                            const t = d3.transition().duration(400);
+                            let selectedData = sortData(dataBarPlot);
+                            let geoAreas = selectedData.map(yAccessor);
+
+                            drawXAxis(svg, selectedData);
+                            yScale.domain(geoAreas);
+                            yScale.domain(selectedData.map(yAccessor));
+                            drawYAxis(svg, selectedData, t);
+                            drawBars(svg, selectedData, t);
+                            //console.log(tweets_block);
+                        } else {
+                            curdate = new Date(curdate.setSeconds(curdate.getSeconds() + 1))
+                            //curdate_str = strftime('%Y-%m-%dT%H:%M:%SZ', curdate)
+                            //console.log(curdate_str)
+                            //console.log(curdate)
+                            //console.log(horariosData[block_idx])
+
+                            for (let i = block_idx; i > 0; i--) {
+                                fdate = new Date(horariosData[i].created_at)
+                                if (fdate.getTime() == curdate.getTime()) {
+                                    tweets_block.push(horariosData[i]);
+                                } else {
+                                    block_idx = i;
+                                    break;
+                                }
+                            }
+
+                            for (index = 0; index < tweets_block.length; ++index) {
+                                var contains = containsUsername(tweets_block[index].username, userlist)
+                                if (contains.exists == true) {
+                                    userlist[contains.index].retweets = parseInt(userlist[contains.index].retweets) + parseInt(tweets_block[index].retweets)
+                                } else {
+                                    userlist.push(tweets_block[index])
+                                }
+                            }
+
+                            var sorted_ulist = userlist.sort((a, b) => b.retweets - a.retweets);
+
+                            var str_amigo = "";
+                            for (index = 0; index < 10; ++index) {
+                                //dataBarPlot[index].value = sorted_ulist[index].retweets/Math.pow(10, (sorted_ulist[index].retweets+"").length);
+                                dataBarPlot[index].value = sorted_ulist[index].retweets;
+                                dataBarPlot[index].usuario = sorted_ulist[index].username;
+                                str_amigo += sorted_ulist[index].username + " : " + sorted_ulist[index].retweets + "<br>"
+                            }
+                            var div = document.getElementById('userranking');
+                            div.innerHTML = str_amigo;
+
+                            const t = d3.transition().duration(400);
+                            let selectedData = sortData(dataBarPlot);
+                            let geoAreas = selectedData.map(yAccessor);
+
+                            drawXAxis(svg, selectedData);
+                            yScale.domain(geoAreas);
+                            yScale.domain(selectedData.map(yAccessor));
+                            drawYAxis(svg, selectedData, t);
+                            drawBars(svg, selectedData, t);
+                            console.log(dataBarPlot);
+                        }
+
+                        media = cnt - Math.round(document.getElementById("video").currentTime);
+
+                        if (media == 1 || media == 0) {
+                            var olderTime = time.setSeconds(time.getSeconds() - 1);
+                            var futureTime = time.setSeconds(time.getSeconds() + 1);
+                        } else {
+                            cnt = Math.round(document.getElementById("video").currentTime) + 1;
+
+                            var olderTime = time.setSeconds(time.getSeconds() - (media * -1));
+                            var futureTime = time.setSeconds(time.getSeconds() + (media * -1));
+
+                            //====== Hotfix para o grafico azul ====== //
+                            let newX = [];
+                            let newY = [];
+                            for (let i = 0; i <= cnt; i++) {
+                                newX.push(ex[i]);
+                                newY.push(ey[i]);
+                            }
+                            g2 = {
+                                //x: [ex[cnt]],
+                                //y: [ey[cnt]],
+                                x: newX,
+                                y: newY,
+                                mode: 'lines',
+                                name: 'Progresso',
+                                line: { color: '#E80505' }
+                            }
+
+                            Plotly.newPlot(plotDiv, [g1, g2, g3]);
+                        }
+
+                        //38103981029318930120
+                        document.getElementById("plot_tweets").innerHTML += "<p>" + tweets[cnt] + "</p>" + "<a href=" + infos[cnt] + ">LINK</a>";
+                        document.getElementById("plot_tweets").scrollTop = document.getElementById("plot_tweets").scrollHeight;
+                        //93280192831093810239
+                        var minuteView = {
+                            xaxis: {
+                                type: 'date',
+                                range: [olderTime, futureTime]
+                            }
+                        };
+
+                        var update = {
+                            x: [[], [ex[cnt]]],
+                            y: [[], [ey[cnt]]]
+                        }
+
+                        Plotly.relayout(plotDiv, minuteView);
+                        Plotly.extendTraces(plotDiv, update, [0, 1])
+                        cnt = cnt + 1;
+
+                        //serve para fazer o autoscale automaticamente (porque se nao fica ilegivel)
+                        document.querySelector('[data-title="Autoscale"]').click()
+                    }
+
+                    document.getElementById("video").onpause = function () {
+                        taPausado = true;
+                    }
+
+                    document.getElementById("video").onplay = function () {
+                        taPausado = false;
+                    }
+
+                    document.getElementById("wtfbro").onclick = function () {
+                        document.getElementById("video").currentTime = arrResp[indice % arrResp.length] - 1;
+                        indice++;
+                    }
+
+                    document.getElementById("video").onseeked = function () {
+                        userlist = [];
+                        timedelta = new Date(new Date(horariosData[horariosData.length - 1].created_at).getTime() + (document.getElementById("video").currentTime * 1000));
+
+                        for (let i = horariosData.length - 1; i > 0; i--) {
+                            fdate_str = horariosData[i].created_at;
+                            fdate = new Date(fdate_str).getTime();
+
+                            if (timedelta.getTime() >= fdate) {
+                                var contains = containsUsername(horariosData[i].username, userlist)
+                                if (contains.exists == true) {
+                                    userlist[contains.index].retweets = parseInt(horariosData[contains.index].retweets) + parseInt(horariosData[i].retweets)
+                                } else {
+                                    userlist.push(horariosData[i]);
+                                }
+                            } else {
+                                break;
+                            }
+                        }
+                        //console.log(timedelta)
+
+                        var sorted_ulist = userlist.sort((a, b) => b.retweets - a.retweets);
+
+                        var str_amigo = "";
+                        for (index = 0; index < 10; ++index) {
+                            //if (sorted_ulist[index].username == 'jhowfa'){
+                            //  console.log(sorted_ulist[index])
+                            //}
+                            str_amigo += sorted_ulist[index].username + " : " + sorted_ulist[index].retweets + "<br>"
+                        }
+                        var div = document.getElementById('userranking');
+                        div.innerHTML = str_amigo;
+
+                    }
+
+                }, 1000);
+            })
+        }
+    </script>
+</body>

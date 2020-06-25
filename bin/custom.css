@@ -1,0 +1,29 @@
+.wagText{
+	background-color: #f6f6f8;
+	padding: 10px;
+	border-radius: 30px;
+	border: 1px solid #f6f6f8;
+	font-family: 'Montserrat','Monospace';
+};
+
+
+.btn-primary { color: #fff; background-color: #7200dc; border-color: #2e6da4;
+}
+
+
+.btn-carlos, btn-carlos:active {
+	background-color: #7200dc;
+	border-radius: 20px;
+	border: none;
+	color: #fff;
+	padding: 7px 12px; 
+	margin: 10px 0;
+	font-family: 'Montserrat','Monospace';
+};
+
+
+.btn-carlos:hover {
+	background-color: #c98fff;
+	color: #000;
+};
+ 

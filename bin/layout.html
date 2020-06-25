@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="picassoBackup.css">
+</head>
+<style>
+    .axis {
+        font: 10px sans-serif;
+    }
+
+    .axis path,
+    .axis line {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+    }
+
+    .axis--y path {
+        display: none;
+    }
+
+    .bar {
+        fill: #7200ac;
+        fill-opacity: .9;
+    }
+
+    .wld {
+        fill: #0bb6e0;
+    }
+
+    .chart-title {
+        margin-bottom: 0;
+    }
+
+    .source {
+        margin-top: 0;
+        font-size: 11px;
+    }
+
+    .center {
+        margin: auto;
+        width: 15%;
+        border: 3px solid #73AD21;
+        padding: 10px;
+    }
+</style>
+
+<body>
+    <!-- <script src="https://d3js.org/d3.v3.min.js"></script> -->
+    <script src="//d3js.org/d3.v4.0.0-alpha.28.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/6.2.1/math.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wordcloud2.js/1.1.1/wordcloud2.min.js"></script>
+    <div class="peakvis">
+        <ul>
+            <li><a href="#news"></a></li>
+            <li><a class="" href="layout.html"><img src="./logo.png" height="55" width="200"></a>
+            <li style="float:right"><a>
+                    <button class="wagGit" onclick="pagGithub()">
+                        <span class="icon">
+                            <i class="fa fa-github"></i>
+                        </span>
+                        <span>
+                            GitHub
+                        </span>
+                    </button></a>
+            </li>
+        </ul>
+
+        <br><br>
+
+        <div style="vertical-align: middle;">
+            <p class="write alinhado">Highlight</p>
+            <input type="range" min="1" max="9" value="7" class="slider" id="slaider">
+        </div>
+
+        <br><br>
+
+        <form name="formulario">
+            <div class="row">
+                <div>
+                    <input name="dadoss" type="text" class="wagText" placeholder="Data" value="bbb2018.json">
+                    <input name="videoo" type="text" class="wagText alinhado" placeholder="Video"
+                        value="bbb.m4v">
+                </div>
+
+            </div>
+        </form>
+
+        <div>
+            <button type="submit" class="wagButton" onclick="plot(); return false">Submit</button>
+            <button class="wagButton rightsizeMajor" id="wtfbro">Highlight</button>
+        </div>
+
+        <div id="plotly_div_id"></div>
+
+        <div class="tweetsEvideo">
+            <div id="video_container" class="video"></div>
+            <div id="plot_tweets" class=""></div>
+        </div>
+
+        <div class="wrapper">
+            <div class="chart"></div>
+        </div>
+
+        <!-- <br><br> -->
+        <!-- lugar das word clouds -->
+        <canvas id="wordCloudTeste" width="600" height="400"></canvas>
+    </div>
+    <script>
+        const margin = { top: 20, right: 30, bottom: 40, left: 260 };
+        const width = 960 - margin.left - margin.right;
+        const height = 400 - margin.top - margin.bottom;
+        const percentFormat = d3.format('.0%');
+        const leftPadding = 5;
+
+        const delay = function (d, i) {
+            return i * 40;
+        };
+
+        function sortData(data) {
+            return data.sort((a, b) => b.value - a.value);
+        }
+
+        function xAccessor(d) {
+            return d.value;
+        }
+
+        function yAccessor(d) {
+            return d.usuario;
+        }
+
+        let xScale = d3.scaleLinear()
+            .range([0, width])
+            //ARRUMAR O VALOR DO EIXO
+            //COLOCAR UM VALOR MAXIMO +10% DELE MESMO
+            .domain([0, 2000]);
+
+        const yScale = d3.scaleBand()
+            .rangeRound([0, height], 0.1)
+            .padding(0.1);
+
+        function drawXAxis(el) {
+            el.append('g')
+                .attr('class', 'axis axis--x')
+                .attr('transform', `translate(${leftPadding},${height})`)
+                .call(d3.axisBottom(xScale).tickFormat(d3.format(".0f")));
+        }
+
+        function drawYAxis(el, data, t) {
+            let axis = el.select('.axis--y');
+            if (axis.empty()) {
+                axis = el.append('g')
+                    .attr('class', 'axis axis--y');
+            }
+
+            axis.transition(t)
+                .call(d3.axisLeft(yScale))
+                .selectAll('g')
+                .delay(delay);
+        }
+
+        function drawBars(el, data, t) {
+            let barsG = el.select('.bars-g');
+            if (barsG.empty()) {
+                barsG = el.append('g')
+                    .attr('class', 'bars-g');
+            }
+
+            const bars = barsG
+                .selectAll('.bar')
+                .data(data, yAccessor);
+            bars.exit()
+                .remove();
+            bars.enter()
+                .append('rect')
+                .attr('class', 'bar')
+                .attr('x', leftPadding)
+                .merge(bars).transition(t)
+                .attr('y', d => yScale(yAccessor(d)))
+                .attr('width', d => xScale(xAccessor(d)))
+                .attr('height', yScale.bandwidth())
+                .delay(delay);
+        }
+
+        const svg = d3.select('.chart').append('svg')
+            .attr('width', width + margin.left + margin.right)
+            .attr('height', height + margin.top + margin.bottom)
+            .append('g')
+            .attr('transform', `translate(${margin.left},${margin.top})`);
+
+        function pagGithub() {
+            window.location.assign("https://github.com/DAVINTLAB");
+        }
+
+        function plotVideo() {
+            sessionStorage.nomeVideo = document.formulario.videoo.value;
+            $("#video_container").load("loadVideo.html");
+            document.getElementById("plot_tweets").className = "plot_tweets"
+        }
+
+        function existK(nome, lista) {
+            for (let i = 0; i < lista.length; i++) {
+                if (nome == lista[i]) {
+                    return { y: true, i: i };
+                }
+            }
+            return { exists: false, index: 0 };
+        }
+
+        function containsUsername(username, list) {
+            var i;
+            for (i = 0; i < list.length; i++) {
+                if (list[i].username === username) {
+                    return { exists: true, index: i };
+                }
+            }
+            return { exists: false, index: 0 };
+        }
+
+        function plot() {
+            d3.json("/DATA/dados/" + document.formulario.dadoss.value, function (data) {
+
+                //criação dos eixos X e Y
+                horariosData = data;
+                var horarios = [];
+                var ex = [];
+                var ey = [];
+                let tweets = [];
+                let infos = [];
+                var count = 0;
+
+let respWC = [];
+for (let i = 0; i < 10; i++) {
+	respWC.push([" ", 0]);
+}
+
+let auxMap = new Map();
+let respF = [];
+
+                for (var i = horariosData.length - 1; i >= 0; i--) {
+                    horarios.push(new Date(horariosData[i].created_at));
+                }
+
+                var started_time = new Date(JSON.parse(JSON.stringify(horarios[0])));
+                started_time.setSeconds(started_time.getSeconds() + 1);
+                for (let i = 0; i < horarios.length; i++) {
+                    if (horarios[i] >= started_time) {
+                        ey.push(count);
+                        started_time = new Date(JSON.parse(JSON.stringify(horarios[i])));
+                        ex.push(started_time);
+                        tweets.push(horariosData[horarios.length - i - 1].text + "         [" + horariosData[horarios.length - i - 1].created_at + "]");
+                        infos.push("https://twitter.com/" + horariosData[horarios.length - i - 1].username + "/status/" + horariosData[horarios.length - i - 1].id)
+                        started_time.setSeconds(started_time.getSeconds() + 1);
+                        count = 1;
+                        auxMap = Array.from(auxMap);
+
+for (let m = 0; m < auxMap.length; m++) {
+	let keys = [];
+	for (let j = 0; j < 10; j++) {
+		keys.push(respWC[j][0]);
+	}
+	let exist = existK(auxMap[m][0], keys);
+	if (exist.y) {
+		respWC[exist.i][1] += auxMap[m][1];
+		respWC.sort((a, b) => a[1] - b[1]);
+	}
+	else if (auxMap[m][1] > respWC[0][1]) {
+		respWC[0] = auxMap[m];
+		respWC.sort((a, b) => a[1] - b[1]);
+	}
+}
+/* console.log(JSON.parse(JSON.stringify(respWC)));
+break; */
+auxMap = new Map();
+respF.push(JSON.parse(JSON.stringify(respWC)));
+
+                    } else {
+                        count = count + 1;
+        if (horariosData[horariosData.length - i - 1].text.substring(0, 4) != "RT @") {
+		let aux = horariosData[horariosData.length - i - 1].text.split(" ");
+		for (let j = 0; j < aux.length; j++) {
+			auxMap.set(aux[j], auxMap.get(aux[j]) + 1);
+			if (Number.isNaN(auxMap.get(aux[j]))) {
+				auxMap.set(aux[j], 1);
+			}
+		}
+	}
+                    }
+                }
+
+                let testeA = [];
+                let testeB = [];
+                let count2 = 0;
+
+                let testeC = new Date(JSON.parse(JSON.stringify(horarios[0])));
+                testeC.setSeconds(testeC.getSeconds() + 30);
+                for (let i = 0; i < horarios.length; i++) {
+                    if (horarios[i] >= testeC) {
+                        testeB.push(count2);
+                        count2 = 1;
+                        testeC = new Date(JSON.parse(JSON.stringify(horarios[i])));
+                        testeA.push(testeC);
+                        testeC.setSeconds(testeC.getSeconds() + 30);
+                    } else {
+                        count2 = count2 + 1;
+                    }
+                }
+                //plot do grafico
+                let plotDiv = document.getElementById("plotly_div_id");
+                //===================== Arrumar depois =======================
+                console.log(ey.length);
+                console.log(testeB.length);
+                let respX = [0];
+                let respY = [];
+                for (let i = 1; i < testeB.length; i++) {
+                    respX[i] = i;
+                    if (testeB[i] > testeB[i - 1]) {
+                        respY[i] = 1;
+                    } else {
+                        respY[i] = 0;
+                    }
+                }
+
+                let sorti = JSON.parse(JSON.stringify(testeB)).sort((a, b) => a - b);
+                let reskein = math.quantileSeq(sorti, document.getElementById("slaider").value / 10)
+                let marcadores = [];
+                let arrResp = [];
+                for (let i = 1; i < respY.length; i++) {
+                    if ((respY[i] == 1 && respY[i - 1] == 0) || (respY[i] == 0 && respY[i - 1] == 1 && marcadores.length % 2 != 0)) {
+                        marcadores.push(i - 1);
+                    }
+                }
+                marcadores.push(0);
+                for (let i = 0; i < marcadores.length - 1; i++) {
+                    if (testeB[marcadores[i + 1]] - testeB[marcadores[i]] > reskein) {
+                        arrResp.push(marcadores[i] * 30);
+                    }
+                }
+                document.getElementById("slaider").oninput = function () {
+                    arrResp = [];
+                    let reskein = math.quantileSeq(sorti, document.getElementById("slaider").value / 10)
+                    for (let i = 0; i < marcadores.length - 1; i++) {
+                        if (testeB[marcadores[i + 1]] - testeB[marcadores[i]] > reskein) {
+                            arrResp.push(marcadores[i] * 30);
+                        }
+                    }
+                    respX = [];
+                    respY = [];
+                    for (let i = 0; i < arrResp.length; i++) {
+                        respX[i] = ex[arrResp[i]];
+                        respY[i] = ey[arrResp[i]];
+                    }
+
+                    g3 = {
+                        x: respX,
+                        y: respY,
+                        name: 'Início dos Picos',
+                        mode: 'markers',
+                        marker: {
+                            size: 10,
+                            color: '#7200dc'
+                        }
+                    }
+                    var data = [g1, g2, g3];
+                    indice = arrResp.length;
+                    Plotly.newPlot(plotDiv, data);
+                };
+                //============================================================
+                let dataBarPlot = [];
+                for (let j = 0; j < 10; j++) {
+                    let value = 0;
+                    let aux = " ";
+                    const newEntry = {
+                        value,
+                        usuario: aux
+                    };
+                    dataBarPlot.push(newEntry);
+                }
+                const t = d3.transition().duration(400);
+
+                let cnt = 0;
+                let acc = ey[0];
+                let indice = arrResp.length;
+                let flag = 0;
+                let taPausado = true;
+                let media = 0;
+                let eixox = [];
+                let eixoy = [];
+
+                let g1 = {
+                    x: ex,
+                    y: ey,
+                    mode: 'lines',
+                    name: 'Tweets',
+                    line: { color: '#999aa7' }
+                }
+
+                let g2 = {
+                    x: [ex[0]],
+                    y: [ey[0]],
+                    mode: 'lines',
+                    name: 'Progresso',
+                    line: { color: '#0bb6e0' }
+                }
+
+                respX = [];
+                respY = [];
+                for (let i = 0; i < arrResp.length; i++) {
+                    respX[i] = ex[arrResp[i]];
+                    respY[i] = ey[arrResp[i]];
+                }
+
+                let g3 = {
+                    x: respX,
+                    y: respY,
+                    name: 'Início dos Picos',
+                    mode: 'markers',
+                    marker: {
+                        size: 10,
+                        color: '#7200dc'
+                    }
+                }
+
+                var data = [g1, g2, g3];
+                var userlist = [];
+                Plotly.newPlot(plotDiv, data);
+                plotVideo();
+
+                //*****coisas usadas para gerar as wordClouds*****
+
+                var interval = setInterval(function () {
+
+                    if (!taPausado) {
+                        var time = ex[cnt];
+
+                        eixox.push(time);
+                        eixoy.push(ey[cnt]);
+                        var tweets_block = [];
+
+                        //*****coisas usadas para gerar as wordClouds*****
+/*                         let curdate = new Date(horariosData[block_idx - 1].created_at);
+                        let auxMap = new Map();
+
+                        for (let i = block_idx; i > 0; i--) {
+                            if (horariosData[i].text.substring(0, 4) != "RT @") {
+                                fdate = new Date(horariosData[i].created_at)
+                                if (fdate.getTime() == curdate.getTime()) {
+                                    let aux = horariosData[i].text.split(" ");
+                                    for (let j = 0; j < aux.length; j++) {
+                                        auxMap.set(aux[j], auxMap.get(aux[j]) + 1);
+                                        if (Number.isNaN(auxMap.get(aux[j]))) {
+                                            auxMap.set(aux[j], 1);
+                                        }
+                                    }
+                                } else {
+                                    block_idx = i;
+                                    break;
+                                }
+                            }
+                        }
+                        for (let i = (acc - ey[cnt]); i < acc; i++) {
+                            if (horariosData[horariosData.length - i - 1].text.substring(0, 4) != "RT @") {
+                                let aux = horariosData[horariosData.length - i - 1].text.split(" ");
+                                for (let j = 0; j < aux.length; j++) {
+                                    auxMap.set(aux[j], auxMap.get(aux[j]) + 1);
+                                    if (Number.isNaN(auxMap.get(aux[j]))) {
+                                        auxMap.set(aux[j], 1);
+                                    }
+                                }
+                            }
+                        }
+
+                        auxMap = Array.from(auxMap);
+                        for (let i = 0; i < auxMap.length; i++) {
+                            let keys = [];
+                            for (let j = 0; j < 10; j++) {
+                                keys.push(respWC[j][0]);
+                            }
+                            let exist = existK(auxMap[i][0], keys);
+                            if (exist.y) {
+                                respWC[exist.i][1] += auxMap[i][1];
+                                respWC.sort((a, b) => a[1] - b[1]);
+                            }
+                            else if (auxMap[i][1] > respWC[0][1]) {
+                                //console.log("alguem passou o ultimo!");
+                                respWC[0] = auxMap[i];
+                                respWC.sort((a, b) => a[1] - b[1]);
+                            }
+                        }
+
+                        contadorWD++;
+                        console.log(respWC); */
+                        if (cnt%30 == 0) {                           
+                            let listaPlot = [];
+                            //let fatorDivisao = respWC[0][1];
+                            let fatorDivisao = respF[cnt][0][1];
+                            //for (let k = 0; k < respWC.length; k++) {
+                            for (let k = 0; k < respF[cnt].length; k++) {
+                                //listaPlot[k] = [respWC[k][0], respWC[k][1] / fatorDivisao];
+                                //listaPlot[k] = [respF[cnt][k][0], respF[cnt][k][1] / fatorDivisao];
+                                listaPlot.push([respF[cnt][k][0], respF[cnt][k][1] / 0.25]);                               
+                            }  
+                            console.log(listaPlot);                         
+                            contadorWD = 0;
+                            let options = {
+                                list: listaPlot,
+                                gridSize: 18,
+                                weightFactor: 3,
+                                fontFamily: 'Finger Paint, cursive, sans-serif',
+                                color: '#f0f0c0',
+                                hover: window.drawBox,
+                                backgroundColor: '#001f00'
+                            };
+                            WordCloud(document.getElementById('wordCloudTeste'), options);
+                        }
+                        //*****final das coisas usadas para gerar as wordClouds*****
+
+                        //************inicio do graph user**************************
+                        for (let i = (acc - ey[cnt]); i < acc; i++) {
+                            tweets_block.push(horariosData[horariosData.length - 1 - i]);
+                        }
+
+                        for (index = 0; index < tweets_block.length; ++index) {
+                            var contains = containsUsername(tweets_block[index].username, userlist);
+                            if (contains.exists == true) {
+                                userlist[contains.index].retweet_count = parseInt(userlist[contains.index].retweet_count) + parseInt(tweets_block[index].retweet_count)
+                            } else {
+                                userlist.push(tweets_block[index])
+                            }
+                        }
+                        var sorted_ulist = userlist.sort((a, b) => b.retweet_count - a.retweet_count);
+                        for (index = 0; index < 10; ++index) {
+                            //dataBarPlot[index].value = sorted_ulist[index].retweet_count/Math.pow(10, (sorted_ulist[index].retweet_count+"").length);
+                            dataBarPlot[index].value = sorted_ulist[index].retweet_count;
+                            dataBarPlot[index].usuario = sorted_ulist[index].username;
+                            //str_amigo += sorted_ulist[index].username + " : " + sorted_ulist[index].retweet_count + "<br>"
+                        }
+
+                        let selectedData = sortData(dataBarPlot);
+                        let geoAreas = selectedData.map(yAccessor);
+
+                        drawXAxis(svg, selectedData);
+                        yScale.domain(geoAreas);
+                        yScale.domain(selectedData.map(yAccessor));
+                        drawYAxis(svg, selectedData, t);
+                        drawBars(svg, selectedData, t);
+
+                        //************final do graph user**************************
+
+                        media = cnt - Math.round(document.getElementById("video").currentTime);
+
+                        if (media == 1 || media == 0) {
+                            var olderTime = time.setSeconds(time.getSeconds() - 1);
+                            var futureTime = time.setSeconds(time.getSeconds() + 1);
+                        } else {
+                            cnt = Math.round(document.getElementById("video").currentTime) + 1;
+                            acc = 0;
+                            for (let i = 0; i < cnt - 1; i++) {
+                                acc = acc + ey[i];
+                            }
+                            //hotfix js fbm
+                            if (acc == 0) { acc = ey[0]; }
+
+                            var olderTime = time.setSeconds(time.getSeconds() - (media * -1));
+                            var futureTime = time.setSeconds(time.getSeconds() + (media * -1));
+
+                            //====== Hotfix para o graph user ====== //
+                            
+                            //trancar o plot de graph user ate conseguir os novos dados
+                            //taPausado = true;
+
+                            dataBarPlot = [];
+                            userlist = [];
+                            for (let j = 0; j < 10; j++) {
+                                let value = 0;
+                                let aux = " ";
+                                const newEntry = {
+                                    value,
+                                    usuario: aux
+                                };
+                                dataBarPlot.push(newEntry);
+                            }
+                            for (let i = 0; i < acc; i++) {
+                                tweets_block.push(horariosData[horariosData.length - 1 - i]);
+                            }
+                            
+                            for (index = 0; index < tweets_block.length; ++index) {
+                                var contains = containsUsername(tweets_block[index].username, userlist);
+                                if (contains.exists == true) {
+                                    userlist[contains.index].retweet_count = parseInt(userlist[contains.index].retweet_count) + parseInt(tweets_block[index].retweet_count)
+                                } else {
+                                    userlist.push(tweets_block[index])
+                                }
+                            }
+                            var sorted_ulist = userlist.sort((a, b) => b.retweet_count - a.retweet_count);
+                            for (index = 0; index < 10; ++index) {
+                                dataBarPlot[index].value = sorted_ulist[index].retweet_count;
+                                dataBarPlot[index].usuario = sorted_ulist[index].username;
+                            }
+                            //console.log("fim!");
+                            //taPausado = false;
+                            //==================================== //
+
+                            //====== Hotfix para o grafico azul ====== //
+                            let newX = [];
+                            let newY = [];
+                            for (let i = 0; i <= cnt; i++) {
+                                newX.push(ex[i]);
+                                newY.push(ey[i]);
+                            }
+                            g2 = {
+                                //x: [ex[cnt]],
+                                //y: [ey[cnt]],
+                                x: newX,
+                                y: newY,
+                                mode: 'lines',
+                                name: 'Progresso',
+                                line: { color: '#0bb6e0' }
+                            }
+
+                            Plotly.newPlot(plotDiv, [g1, g2, g3]);
+                        }
+
+                        //38103981029318930120                                  
+                        document.getElementById("plot_tweets").innerHTML += "<p class='write'>" + tweets[cnt] + "</p>" + "<a class='write' href=" + infos[cnt] + ">LINK</a>";
+                        document.getElementById("plot_tweets").scrollTop = document.getElementById("plot_tweets").scrollHeight;
+                        //93280192831093810239
+                        var minuteView = {
+                            xaxis: {
+                                type: 'date',
+                                range: [olderTime, futureTime]
+                            }
+                        };
+
+                        var update = {
+                            x: [[], [ex[cnt]]],
+                            y: [[], [ey[cnt]]]
+                        }
+
+                        Plotly.relayout(plotDiv, minuteView);
+                        Plotly.extendTraces(plotDiv, update, [0, 1]);
+                        cnt = cnt + 1;
+                        acc = acc + ey[cnt];
+
+                        //serve para fazer o autoscale automaticamente (porque se nao fica ilegivel)
+                        document.querySelector('[data-title="Autoscale"]').click()
+                    }
+
+                    document.getElementById("video").onpause = function () {
+                        taPausado = true;
+                    }
+
+                    document.getElementById("video").onplay = function () {
+                        taPausado = false;
+                    }
+
+                    document.getElementById("wtfbro").onclick = function () {
+                        document.getElementById("video").currentTime = arrResp[indice % arrResp.length] - 1;
+                        indice++;
+                    }
+
+                    document.getElementById("video").onseeked = function () {
+                        userlist = [];
+                        timedelta = new Date(new Date(horariosData[horariosData.length - 1].created_at).getTime() + (document.getElementById("video").currentTime * 1000));
+
+                        for (let i = horariosData.length - 1; i > 0; i--) {
+                            fdate_str = horariosData[i].created_at;
+                            fdate = new Date(fdate_str).getTime();
+
+                            if (timedelta.getTime() >= fdate) {
+                                var contains = containsUsername(horariosData[i].username, userlist)
+                                if (contains.exists == true) {
+                                    userlist[contains.index].retweet_count = parseInt(horariosData[contains.index].retweet_count) + parseInt(horariosData[i].retweet_count)
+                                } else {
+                                    userlist.push(horariosData[i]);
+                                }
+                            } else {
+                                break;
+                            }
+                        }
+                    }
+
+                }, 1000);
+            })
+        }
+    </script>
+</body>

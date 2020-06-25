@@ -1,0 +1,165 @@
+.peakvis{
+	max-width: 80%;
+	margin: auto;
+	background: white;
+	padding: 10px;
+}
+
+.wagText{
+	background-color: #f6f6f8;
+	padding: 12px;
+	border-radius: 30px;
+	border: 1px solid #f6f6f8;
+	font-family: 'Montserrat','Monospace';
+	width: 40%;
+}
+
+.wagButton, wagButton:active {
+	background-color: #7200dc;
+	border-radius: 20px;
+	border: none;
+	color: #fff;
+	padding: 9px 12px; 
+	margin: 10px 0;
+	font-family: 'Montserrat','Monospace';
+}
+
+.wagGit, wagGit:active {
+	background-color: #7200dc;
+	border-radius: 10px;
+	border: none;
+	color: #fff;
+	padding: 9px 14px; 
+	margin: 10px 0;
+	font-family: 'Montserrat','Monospace';
+}
+
+.wagGit:hover {
+	background-color: #c98fff;
+	color: #000;
+}
+
+.wagButton:hover {
+	background-color: #c98fff;
+	color: #000;
+}
+.slidecontainer {
+	width: 100%;
+  }
+  
+.slider {
+	-webkit-appearance: none;
+	width: 10%;
+	height: 8px;
+	border-radius: 5px;
+	background: #d3d3d3;
+	outline: none;
+	opacity: 0.7;
+	-webkit-transition: .2s;
+	transition: opacity .2s;
+  }
+  
+  .slider:hover {
+	opacity: 1;
+  }
+  
+  .slider::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 15px;
+	height: 15px;
+	border-radius: 50%;
+	background: #7200dc;
+	cursor: pointer;
+  }
+
+.rightsizeMajor{
+	position: relative;
+	left: 40%;
+}
+
+.rightsize{
+	position: relative;
+	left: 10%;
+}
+
+.alinhado{
+	margin-left: 45px; 
+	display: inline-block;  
+	vertical-align: middle;
+	max-width: calc(100% - 70px);	
+}
+
+.write{
+	font-family: 'Montserrat','Monospace';
+}
+
+ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	height: 80px;
+	overflow: hidden;
+	background-color: #f6f6f8;
+  }
+  
+  li {
+	float: left;
+  }
+  
+  li a {
+	display: inline-block;
+	color: white;
+	text-align: center;
+	padding: 14px 16px;
+	text-decoration: none;
+  }
+
+.plot_tweets{
+	position: relative;
+	width:55%;
+	max-height: 370px;
+	bottom: 370px;
+	vertical-align: middle;
+	margin-left: 45px;
+	left: 42%;
+	background-color: #f6f6f8;
+	overflow:scroll;
+}
+
+.video{
+	position: relative;
+	vertical-align: middle;
+	right: 14%;
+}
+
+.tweetsEvideo{
+	display:block;
+	position: relative;
+	bottom: 10px;
+}
+
+.alinhadoTESTE{
+	position: relative;
+	bottom: 10px;
+}
+
+::-webkit-scrollbar-track
+{
+	box-shadow: inset 0 0 50px #f6f6f8;
+	border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+	background: #7200dc; 
+	border-radius: 10px;
+}
+
+::-webkit-scrollbar
+{
+	width: 12px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: #c98fff; 
+}
