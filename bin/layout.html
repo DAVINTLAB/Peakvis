@@ -6,51 +6,9 @@
     <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="picassoBackup.css">
 </head>
-<style>
-    .axis {
-        font: 10px sans-serif;
-    }
-
-    .axis path,
-    .axis line {
-        fill: none;
-        stroke: #000;
-        shape-rendering: crispEdges;
-    }
-
-    .axis--y path {
-        display: none;
-    }
-
-    .bar {
-        fill: #7200ac;
-        fill-opacity: .9;
-    }
-
-    .wld {
-        fill: #0bb6e0;
-    }
-
-    .chart-title {
-        margin-bottom: 0;
-    }
-
-    .source {
-        margin-top: 0;
-        font-size: 11px;
-    }
-
-    .center {
-        margin: auto;
-        width: 15%;
-        border: 3px solid #73AD21;
-        padding: 10px;
-    }
-</style>
 
 <body>
-    <!-- <script src="https://d3js.org/d3.v3.min.js"></script> -->
-    <script src="//d3js.org/d3.v4.0.0-alpha.28.min.js"></script>
+    <script src="https://d3js.org/d3.v3.min.js"></script>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/6.2.1/math.js"></script>
@@ -83,9 +41,9 @@
         <form name="formulario">
             <div class="row">
                 <div>
-                    <input name="dadoss" type="text" class="wagText" placeholder="Data" value="bbb2018.json">
+                    <input name="dadoss" type="text" class="wagText" placeholder="Data" value="bracrc_fullgame.json">
                     <input name="videoo" type="text" class="wagText alinhado" placeholder="Video"
-                        value="bbb.m4v">
+                        value="brasilcarlos.m4v">
                 </div>
 
             </div>
@@ -103,96 +61,11 @@
             <div id="plot_tweets" class=""></div>
         </div>
 
-        <div class="wrapper">
-            <div class="chart"></div>
-        </div>
-
         <!-- <br><br> -->
         <!-- lugar das word clouds -->
         <canvas id="wordCloudTeste" width="600" height="400"></canvas>
     </div>
     <script>
-        const margin = { top: 20, right: 30, bottom: 40, left: 260 };
-        const width = 960 - margin.left - margin.right;
-        const height = 400 - margin.top - margin.bottom;
-        const percentFormat = d3.format('.0%');
-        const leftPadding = 5;
-
-        const delay = function (d, i) {
-            return i * 40;
-        };
-
-        function sortData(data) {
-            return data.sort((a, b) => b.value - a.value);
-        }
-
-        function xAccessor(d) {
-            return d.value;
-        }
-
-        function yAccessor(d) {
-            return d.usuario;
-        }
-
-        let xScale = d3.scaleLinear()
-            .range([0, width])
-            //ARRUMAR O VALOR DO EIXO
-            //COLOCAR UM VALOR MAXIMO +10% DELE MESMO
-            .domain([0, 2000]);
-
-        const yScale = d3.scaleBand()
-            .rangeRound([0, height], 0.1)
-            .padding(0.1);
-
-        function drawXAxis(el) {
-            el.append('g')
-                .attr('class', 'axis axis--x')
-                .attr('transform', `translate(${leftPadding},${height})`)
-                .call(d3.axisBottom(xScale).tickFormat(d3.format(".0f")));
-        }
-
-        function drawYAxis(el, data, t) {
-            let axis = el.select('.axis--y');
-            if (axis.empty()) {
-                axis = el.append('g')
-                    .attr('class', 'axis axis--y');
-            }
-
-            axis.transition(t)
-                .call(d3.axisLeft(yScale))
-                .selectAll('g')
-                .delay(delay);
-        }
-
-        function drawBars(el, data, t) {
-            let barsG = el.select('.bars-g');
-            if (barsG.empty()) {
-                barsG = el.append('g')
-                    .attr('class', 'bars-g');
-            }
-
-            const bars = barsG
-                .selectAll('.bar')
-                .data(data, yAccessor);
-            bars.exit()
-                .remove();
-            bars.enter()
-                .append('rect')
-                .attr('class', 'bar')
-                .attr('x', leftPadding)
-                .merge(bars).transition(t)
-                .attr('y', d => yScale(yAccessor(d)))
-                .attr('width', d => xScale(xAccessor(d)))
-                .attr('height', yScale.bandwidth())
-                .delay(delay);
-        }
-
-        const svg = d3.select('.chart').append('svg')
-            .attr('width', width + margin.left + margin.right)
-            .attr('height', height + margin.top + margin.bottom)
-            .append('g')
-            .attr('transform', `translate(${margin.left},${margin.top})`);
-
         function pagGithub() {
             window.location.assign("https://github.com/DAVINTLAB");
         }
@@ -201,25 +74,6 @@
             sessionStorage.nomeVideo = document.formulario.videoo.value;
             $("#video_container").load("loadVideo.html");
             document.getElementById("plot_tweets").className = "plot_tweets"
-        }
-
-        function existK(nome, lista) {
-            for (let i = 0; i < lista.length; i++) {
-                if (nome == lista[i]) {
-                    return { y: true, i: i };
-                }
-            }
-            return { exists: false, index: 0 };
-        }
-
-        function containsUsername(username, list) {
-            var i;
-            for (i = 0; i < list.length; i++) {
-                if (list[i].username === username) {
-                    return { exists: true, index: i };
-                }
-            }
-            return { exists: false, index: 0 };
         }
 
         function plot() {
@@ -231,16 +85,21 @@
                 var ex = [];
                 var ey = [];
                 let tweets = [];
+				let wordClouds = [];
                 let infos = [];
                 var count = 0;
 
-let respWC = [];
-for (let i = 0; i < 10; i++) {
-	respWC.push([" ", 0]);
-}
+				d3.text("/DATA/testeWC.txt", function(text) {
+                    let aux = text.split("\n");
 
-let auxMap = new Map();
-let respF = [];
+                    for (let k = 0; k < aux.length; k++) {
+                        wordClouds.push(aux[k].split(","));
+                        for (let m = 1; m < 20; m+=2) {
+                            wordClouds[k][m] = Number.parseInt(wordClouds[k][m]);                     
+                        }            
+                    }
+					console.log(wordClouds.length);
+                });
 
                 for (var i = horariosData.length - 1; i >= 0; i--) {
                     horarios.push(new Date(horariosData[i].created_at));
@@ -248,7 +107,7 @@ let respF = [];
 
                 var started_time = new Date(JSON.parse(JSON.stringify(horarios[0])));
                 started_time.setSeconds(started_time.getSeconds() + 1);
-                for (let i = 0; i < horarios.length; i++) {
+                for (var i = 0; i < horarios.length; i++) {
                     if (horarios[i] >= started_time) {
                         ey.push(count);
                         started_time = new Date(JSON.parse(JSON.stringify(horarios[i])));
@@ -256,42 +115,14 @@ let respF = [];
                         tweets.push(horariosData[horarios.length - i - 1].text + "         [" + horariosData[horarios.length - i - 1].created_at + "]");
                         infos.push("https://twitter.com/" + horariosData[horarios.length - i - 1].username + "/status/" + horariosData[horarios.length - i - 1].id)
                         started_time.setSeconds(started_time.getSeconds() + 1);
+                        //contadorWD = contadorWD + 1;
                         count = 1;
-                        auxMap = Array.from(auxMap);
-
-for (let m = 0; m < auxMap.length; m++) {
-	let keys = [];
-	for (let j = 0; j < 10; j++) {
-		keys.push(respWC[j][0]);
-	}
-	let exist = existK(auxMap[m][0], keys);
-	if (exist.y) {
-		respWC[exist.i][1] += auxMap[m][1];
-		respWC.sort((a, b) => a[1] - b[1]);
-	}
-	else if (auxMap[m][1] > respWC[0][1]) {
-		respWC[0] = auxMap[m];
-		respWC.sort((a, b) => a[1] - b[1]);
-	}
-}
-/* console.log(JSON.parse(JSON.stringify(respWC)));
-break; */
-auxMap = new Map();
-respF.push(JSON.parse(JSON.stringify(respWC)));
-
                     } else {
                         count = count + 1;
-        if (horariosData[horariosData.length - i - 1].text.substring(0, 4) != "RT @") {
-		let aux = horariosData[horariosData.length - i - 1].text.split(" ");
-		for (let j = 0; j < aux.length; j++) {
-			auxMap.set(aux[j], auxMap.get(aux[j]) + 1);
-			if (Number.isNaN(auxMap.get(aux[j]))) {
-				auxMap.set(aux[j], 1);
-			}
-		}
-	}
                     }
                 }
+
+                //console.log(words);
 
                 let testeA = [];
                 let testeB = [];
@@ -371,22 +202,8 @@ respF.push(JSON.parse(JSON.stringify(respWC)));
                     Plotly.newPlot(plotDiv, data);
                 };
                 //============================================================
-                let dataBarPlot = [];
-                for (let j = 0; j < 10; j++) {
-                    let value = 0;
-                    let aux = " ";
-                    const newEntry = {
-                        value,
-                        usuario: aux
-                    };
-                    dataBarPlot.push(newEntry);
-                }
-                const t = d3.transition().duration(400);
-
                 let cnt = 0;
-                let acc = ey[0];
                 let indice = arrResp.length;
-                let flag = 0;
                 let taPausado = true;
                 let media = 0;
                 let eixox = [];
@@ -427,11 +244,9 @@ respF.push(JSON.parse(JSON.stringify(respWC)));
                 }
 
                 var data = [g1, g2, g3];
-                var userlist = [];
+
                 Plotly.newPlot(plotDiv, data);
                 plotVideo();
-
-                //*****coisas usadas para gerar as wordClouds*****
 
                 var interval = setInterval(function () {
 
@@ -440,117 +255,31 @@ respF.push(JSON.parse(JSON.stringify(respWC)));
 
                         eixox.push(time);
                         eixoy.push(ey[cnt]);
-                        var tweets_block = [];
 
                         //*****coisas usadas para gerar as wordClouds*****
-/*                         let curdate = new Date(horariosData[block_idx - 1].created_at);
-                        let auxMap = new Map();
+                        if (cnt % 15 == 0) {
 
-                        for (let i = block_idx; i > 0; i--) {
-                            if (horariosData[i].text.substring(0, 4) != "RT @") {
-                                fdate = new Date(horariosData[i].created_at)
-                                if (fdate.getTime() == curdate.getTime()) {
-                                    let aux = horariosData[i].text.split(" ");
-                                    for (let j = 0; j < aux.length; j++) {
-                                        auxMap.set(aux[j], auxMap.get(aux[j]) + 1);
-                                        if (Number.isNaN(auxMap.get(aux[j]))) {
-                                            auxMap.set(aux[j], 1);
-                                        }
-                                    }
-                                } else {
-                                    block_idx = i;
-                                    break;
-                                }
-                            }
-                        }
-                        for (let i = (acc - ey[cnt]); i < acc; i++) {
-                            if (horariosData[horariosData.length - i - 1].text.substring(0, 4) != "RT @") {
-                                let aux = horariosData[horariosData.length - i - 1].text.split(" ");
-                                for (let j = 0; j < aux.length; j++) {
-                                    auxMap.set(aux[j], auxMap.get(aux[j]) + 1);
-                                    if (Number.isNaN(auxMap.get(aux[j]))) {
-                                        auxMap.set(aux[j], 1);
-                                    }
-                                }
-                            }
-                        }
-
-                        auxMap = Array.from(auxMap);
-                        for (let i = 0; i < auxMap.length; i++) {
-                            let keys = [];
-                            for (let j = 0; j < 10; j++) {
-                                keys.push(respWC[j][0]);
-                            }
-                            let exist = existK(auxMap[i][0], keys);
-                            if (exist.y) {
-                                respWC[exist.i][1] += auxMap[i][1];
-                                respWC.sort((a, b) => a[1] - b[1]);
-                            }
-                            else if (auxMap[i][1] > respWC[0][1]) {
-                                //console.log("alguem passou o ultimo!");
-                                respWC[0] = auxMap[i];
-                                respWC.sort((a, b) => a[1] - b[1]);
-                            }
-                        }
-
-                        contadorWD++;
-                        console.log(respWC); */
-                        if (cnt%30 == 0) {                           
-                            let listaPlot = [];
-                            //let fatorDivisao = respWC[0][1];
-                            let fatorDivisao = respF[cnt][0][1];
-                            //for (let k = 0; k < respWC.length; k++) {
-                            for (let k = 0; k < respF[cnt].length; k++) {
-                                //listaPlot[k] = [respWC[k][0], respWC[k][1] / fatorDivisao];
-                                //listaPlot[k] = [respF[cnt][k][0], respF[cnt][k][1] / fatorDivisao];
-                                listaPlot.push([respF[cnt][k][0], respF[cnt][k][1] / 0.25]);                               
-                            }  
-                            console.log(listaPlot);                         
+							let listaPlot = [];
+                            let fatorDivisao = wordClouds[cnt/15][59];
+                       
+                            for (let k = 0; k < 60; k+=2) {
+                                listaPlot.push([wordClouds[cnt/15][k], wordClouds[cnt/15][k+1] / (fatorDivisao) / (20/100)]);                               
+                            } 
                             contadorWD = 0;
                             let options = {
                                 list: listaPlot,
                                 gridSize: 18,
                                 weightFactor: 3,
                                 fontFamily: 'Finger Paint, cursive, sans-serif',
-                                color: '#f0f0c0',
+								color: function (word, weight) {
+                                    return (Math.floor(Math.random()*weight) % 2 == 0) ? '#7200dc' : '#0bb6e0';
+                                },
                                 hover: window.drawBox,
-                                backgroundColor: '#001f00'
+                                backgroundColor: '#ffffff'
                             };
                             WordCloud(document.getElementById('wordCloudTeste'), options);
                         }
                         //*****final das coisas usadas para gerar as wordClouds*****
-
-                        //************inicio do graph user**************************
-                        for (let i = (acc - ey[cnt]); i < acc; i++) {
-                            tweets_block.push(horariosData[horariosData.length - 1 - i]);
-                        }
-
-                        for (index = 0; index < tweets_block.length; ++index) {
-                            var contains = containsUsername(tweets_block[index].username, userlist);
-                            if (contains.exists == true) {
-                                userlist[contains.index].retweet_count = parseInt(userlist[contains.index].retweet_count) + parseInt(tweets_block[index].retweet_count)
-                            } else {
-                                userlist.push(tweets_block[index])
-                            }
-                        }
-                        var sorted_ulist = userlist.sort((a, b) => b.retweet_count - a.retweet_count);
-                        for (index = 0; index < 10; ++index) {
-                            //dataBarPlot[index].value = sorted_ulist[index].retweet_count/Math.pow(10, (sorted_ulist[index].retweet_count+"").length);
-                            dataBarPlot[index].value = sorted_ulist[index].retweet_count;
-                            dataBarPlot[index].usuario = sorted_ulist[index].username;
-                            //str_amigo += sorted_ulist[index].username + " : " + sorted_ulist[index].retweet_count + "<br>"
-                        }
-
-                        let selectedData = sortData(dataBarPlot);
-                        let geoAreas = selectedData.map(yAccessor);
-
-                        drawXAxis(svg, selectedData);
-                        yScale.domain(geoAreas);
-                        yScale.domain(selectedData.map(yAccessor));
-                        drawYAxis(svg, selectedData, t);
-                        drawBars(svg, selectedData, t);
-
-                        //************final do graph user**************************
 
                         media = cnt - Math.round(document.getElementById("video").currentTime);
 
@@ -559,52 +288,9 @@ respF.push(JSON.parse(JSON.stringify(respWC)));
                             var futureTime = time.setSeconds(time.getSeconds() + 1);
                         } else {
                             cnt = Math.round(document.getElementById("video").currentTime) + 1;
-                            acc = 0;
-                            for (let i = 0; i < cnt - 1; i++) {
-                                acc = acc + ey[i];
-                            }
-                            //hotfix js fbm
-                            if (acc == 0) { acc = ey[0]; }
 
                             var olderTime = time.setSeconds(time.getSeconds() - (media * -1));
                             var futureTime = time.setSeconds(time.getSeconds() + (media * -1));
-
-                            //====== Hotfix para o graph user ====== //
-                            
-                            //trancar o plot de graph user ate conseguir os novos dados
-                            //taPausado = true;
-
-                            dataBarPlot = [];
-                            userlist = [];
-                            for (let j = 0; j < 10; j++) {
-                                let value = 0;
-                                let aux = " ";
-                                const newEntry = {
-                                    value,
-                                    usuario: aux
-                                };
-                                dataBarPlot.push(newEntry);
-                            }
-                            for (let i = 0; i < acc; i++) {
-                                tweets_block.push(horariosData[horariosData.length - 1 - i]);
-                            }
-                            
-                            for (index = 0; index < tweets_block.length; ++index) {
-                                var contains = containsUsername(tweets_block[index].username, userlist);
-                                if (contains.exists == true) {
-                                    userlist[contains.index].retweet_count = parseInt(userlist[contains.index].retweet_count) + parseInt(tweets_block[index].retweet_count)
-                                } else {
-                                    userlist.push(tweets_block[index])
-                                }
-                            }
-                            var sorted_ulist = userlist.sort((a, b) => b.retweet_count - a.retweet_count);
-                            for (index = 0; index < 10; ++index) {
-                                dataBarPlot[index].value = sorted_ulist[index].retweet_count;
-                                dataBarPlot[index].usuario = sorted_ulist[index].username;
-                            }
-                            //console.log("fim!");
-                            //taPausado = false;
-                            //==================================== //
 
                             //====== Hotfix para o grafico azul ====== //
                             let newX = [];
@@ -643,9 +329,8 @@ respF.push(JSON.parse(JSON.stringify(respWC)));
                         }
 
                         Plotly.relayout(plotDiv, minuteView);
-                        Plotly.extendTraces(plotDiv, update, [0, 1]);
+                        Plotly.extendTraces(plotDiv, update, [0, 1])
                         cnt = cnt + 1;
-                        acc = acc + ey[cnt];
 
                         //serve para fazer o autoscale automaticamente (porque se nao fica ilegivel)
                         document.querySelector('[data-title="Autoscale"]').click()
@@ -662,27 +347,6 @@ respF.push(JSON.parse(JSON.stringify(respWC)));
                     document.getElementById("wtfbro").onclick = function () {
                         document.getElementById("video").currentTime = arrResp[indice % arrResp.length] - 1;
                         indice++;
-                    }
-
-                    document.getElementById("video").onseeked = function () {
-                        userlist = [];
-                        timedelta = new Date(new Date(horariosData[horariosData.length - 1].created_at).getTime() + (document.getElementById("video").currentTime * 1000));
-
-                        for (let i = horariosData.length - 1; i > 0; i--) {
-                            fdate_str = horariosData[i].created_at;
-                            fdate = new Date(fdate_str).getTime();
-
-                            if (timedelta.getTime() >= fdate) {
-                                var contains = containsUsername(horariosData[i].username, userlist)
-                                if (contains.exists == true) {
-                                    userlist[contains.index].retweet_count = parseInt(horariosData[contains.index].retweet_count) + parseInt(horariosData[i].retweet_count)
-                                } else {
-                                    userlist.push(horariosData[i]);
-                                }
-                            } else {
-                                break;
-                            }
-                        }
                     }
 
                 }, 1000);
