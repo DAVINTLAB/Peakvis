@@ -292,6 +292,29 @@
                             var olderTime = time.setSeconds(time.getSeconds() - (media * -1));
                             var futureTime = time.setSeconds(time.getSeconds() + (media * -1));
 
+                            //====== Hotfix para a wordcloud ====== //
+                            let listaPlot = [];
+                            let fatorDivisao = wordClouds[cnt/15][59];
+                       
+                            for (let k = 0; k < 60; k+=2) {
+                                listaPlot.push([wordClouds[cnt/15][k], wordClouds[cnt/15][k+1] / (fatorDivisao) / (20/100)]);                               
+                            } 
+                            contadorWD = 0;
+                            let options = {
+                                list: listaPlot,
+                                gridSize: 18,
+                                weightFactor: 3,
+                                fontFamily: 'Finger Paint, cursive, sans-serif',
+								color: function (word, weight) {
+                                    return (Math.floor(Math.random()*weight) % 2 == 0) ? '#7200dc' : '#0bb6e0';
+                                },
+                                hover: window.drawBox,
+                                backgroundColor: '#ffffff'
+                            };
+                            WordCloud(document.getElementById('wordCloudTeste'), options);
+
+                            //====== ========================== ====== //
+                            
                             //====== Hotfix para o grafico azul ====== //
                             let newX = [];
                             let newY = [];
