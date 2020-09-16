@@ -118,6 +118,7 @@ ul {
 .plot_tweets{
 	background-color: #f6f6f8;
 	display: block;
+	height: 360px;
 	overflow: auto;
 	margin: 0 auto;
 	clear:both;
@@ -129,6 +130,7 @@ ul {
 
 .tweetsEvideo{
 	display: flexbox;
+	height: 360px;
 	/* align-items: center; */
 	flex-wrap: wrap;
 /* 	max-width: 1500px;
