@@ -5,10 +5,12 @@
     <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="picassoBackup.css">
+    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"> -->
 </head>
 
 <body>
-    <script src="https://d3js.org/d3.v3.min.js"></script>
+    <script src='https://d3js.org/d3.v5.min.js'></script>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/6.2.1/math.js"></script>
@@ -41,9 +43,9 @@
         <form name="formulario">
             <div class="row">
                 <div>
-                    <input name="dadoss" type="text" class="wagText" placeholder="Data" value="bracrc_fullgame.json">
+                    <input name="dadoss" type="text" class="wagText" placeholder="Data" value="bbb2018.json">
                     <input name="videoo" type="text" class="wagText alinhado" placeholder="Video"
-                        value="brasilcarlos.m4v">
+                        value="bbb.m4v">
                 </div>
 
             </div>
@@ -63,7 +65,8 @@
 
         <!-- <br><br> -->
         <!-- lugar das word clouds -->
-        <canvas id="wordCloudTeste" width="600" height="400"></canvas>
+        <canvas id="wordCloudTeste" width="600" height="500"></canvas>
+		<svg id='viz'></svg>
     </div>
     <script>
         function pagGithub() {
@@ -77,7 +80,7 @@
         }
 
         function plot() {
-            d3.json("/DATA/dados/" + document.formulario.dadoss.value, function (data) {
+            d3.json("/DATA/dados/" + document.formulario.dadoss.value).then(function (data) {
 
                 //criação dos eixos X e Y
                 horariosData = data;
@@ -89,7 +92,7 @@
                 let infos = [];
                 var count = 0;
 
-				d3.text("/DATA/testeWC.txt", function(text) {
+				d3.text("/DATA/testeWC.txt").then(function(text) {
                     let aux = text.split("\n");
 
                     for (let k = 0; k < aux.length; k++) {
@@ -304,7 +307,7 @@
                                 list: listaPlot,
                                 gridSize: 18,
                                 weightFactor: 3,
-                                fontFamily: 'Finger Paint, cursive, sans-serif',
+                                fontFamily: 'Montserrat, cursive, sans-serif',
 								color: function (word, weight) {
                                     return (Math.floor(Math.random()*weight) % 2 == 0) ? '#7200dc' : '#0bb6e0';
                                 },
@@ -374,6 +377,152 @@
 
                 }, 1000);
             })
+			
+			//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+    var width = 600;
+    var height = 500;
+    var color = d3.scaleOrdinal(d3.schemeCategory10);
+    d3.json("bbb-grafo-semantico.json").then(function (graph) {
+        var label = {
+            'nodes': [],
+            'links': []
+        };
+        graph.nodes.forEach(function (d, i) {
+            label.nodes.push({ node: d });
+            label.nodes.push({ node: d });
+            label.links.push({
+                source: i * 2,
+                target: i * 2 + 1
+            });
+        });
+        var labelLayout = d3.forceSimulation(label.nodes)
+            .force("charge", d3.forceManyBody().strength(-50))
+            .force("link", d3.forceLink(label.links).distance(0).strength(2));
+        var graphLayout = d3.forceSimulation(graph.nodes)
+            .force("charge", d3.forceManyBody().strength(-3000))
+            .force("center", d3.forceCenter(width / 2, height / 2))
+            .force("x", d3.forceX(width / 2).strength(1))
+            .force("y", d3.forceY(height / 2).strength(1))
+            .force("link", d3.forceLink(graph.links).id(function (d) { return d.id; }).distance(50).strength(1))
+            .on("tick", ticked);
+        var adjlist = [];
+        graph.links.forEach(function (d) {
+            adjlist[d.source.index + "-" + d.target.index] = true;
+            adjlist[d.target.index + "-" + d.source.index] = true;
+        });
+        function neigh(a, b) {
+            return a == b || adjlist[a + "-" + b];
+        }
+        var svg = d3.select("#viz").attr("width", width).attr("height", height);
+        var container = svg.append("g");
+        svg.call(
+            d3.zoom()
+                .scaleExtent([.1, 4])
+                .on("zoom", function () { container.attr("transform", d3.event.transform); })
+        );
+        var link = container.append("g").attr("class", "links")
+            .selectAll("line")
+            .data(graph.links)
+            .enter()
+            .append("line")
+            .attr("stroke", "#aaa")
+            .attr("stroke-width", "1px");
+        var node = container.append("g").attr("class", "nodes")
+            .selectAll("g")
+            .data(graph.nodes)
+            .enter()
+            .append("circle")
+            .attr("r", 5)
+            .attr("fill", function (d) { return color(d.group); })
+        node.on("mouseover", focus).on("mouseout", unfocus);
+        node.call(
+            d3.drag()
+                .on("start", dragstarted)
+                .on("drag", dragged)
+                .on("end", dragended)
+        );
+        var labelNode = container.append("g").attr("class", "labelNodes")
+            .selectAll("text")
+            .data(label.nodes)
+            .enter()
+            .append("text")
+            .text(function (d, i) { return i % 2 == 0 ? "" : d.node.id; })
+            .style("fill", "#555")
+            .style("font-family", "Arial")
+            .style("font-size", 14)
+            .style("pointer-events", "none"); // to prevent mouseover/drag capture
+        node.on("mouseover", focus).on("mouseout", unfocus);
+        function ticked() {
+            node.call(updateNode);
+            link.call(updateLink);
+            labelLayout.alphaTarget(0.3).restart();
+            labelNode.each(function (d, i) {
+                if (i % 2 == 0) {
+                    d.x = d.node.x;
+                    d.y = d.node.y;
+                } else {
+                    var b = this.getBBox();
+                    var diffX = d.x - d.node.x;
+                    var diffY = d.y - d.node.y;
+                    var dist = Math.sqrt(diffX * diffX + diffY * diffY);
+                    var shiftX = b.width * (diffX - dist) / (dist * 2);
+                    shiftX = Math.max(-b.width, Math.min(0, shiftX));
+                    var shiftY = 16;
+                    this.setAttribute("transform", "translate(" + shiftX + "," + shiftY + ")");
+                }
+            });
+            labelNode.call(updateNode);
+        }
+        function fixna(x) {
+            if (isFinite(x)) return x;
+            return 0;
+        }
+        function focus(d) {
+            var index = d3.select(d3.event.target).datum().index;
+            node.style("opacity", function (o) {
+                return neigh(index, o.index) ? 1 : 0.1;
+            });
+            labelNode.attr("display", function (o) {
+                return neigh(index, o.node.index) ? "block" : "none";
+            });
+            link.style("opacity", function (o) {
+                return o.source.index == index || o.target.index == index ? 1 : 0.1;
+            });
+        }
+        function unfocus() {
+            labelNode.attr("display", "block");
+            node.style("opacity", 1);
+            link.style("opacity", 1);
+        }
+        function updateLink(link) {
+            link.attr("x1", function (d) { return fixna(d.source.x); })
+                .attr("y1", function (d) { return fixna(d.source.y); })
+                .attr("x2", function (d) { return fixna(d.target.x); })
+                .attr("y2", function (d) { return fixna(d.target.y); });
+        }
+        function updateNode(node) {
+            node.attr("transform", function (d) {
+                return "translate(" + fixna(d.x) + "," + fixna(d.y) + ")";
+            });
+        }
+        function dragstarted(d) {
+            d3.event.sourceEvent.stopPropagation();
+            if (!d3.event.active) graphLayout.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+        }
+        function dragged(d) {
+            d.fx = d3.event.x;
+            d.fy = d3.event.y;
+        }
+        function dragended(d) {
+            if (!d3.event.active) graphLayout.alphaTarget(0);
+            d.fx = null;
+            d.fy = null;
+        }
+    });
+//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+
         }
     </script>
 </body>
