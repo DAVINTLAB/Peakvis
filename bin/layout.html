@@ -263,10 +263,10 @@
                         if (cnt % 15 == 0) {
 
 							let listaPlot = [];
-                            let fatorDivisao = wordClouds[cnt/15][59];
+                            let fatorDivisao = wordClouds[Math.round(cnt/15)][wordClouds[Math.round(cnt/15)].length-1];
                        
-                            for (let k = 0; k < 60; k+=2) {
-                                listaPlot.push([wordClouds[cnt/15][k], wordClouds[cnt/15][k+1] / (fatorDivisao) / (20/100)]);                               
+                            for (let k = 0; k < wordClouds[Math.round(cnt/15)].length; k+=2) {
+                                listaPlot.push([wordClouds[Math.round(cnt/15)][k], wordClouds[Math.round(cnt/15)][k+1] / (fatorDivisao) / (20/100)]);                               
                             } 
                             contadorWD = 0;
                             let options = {
@@ -297,10 +297,10 @@
 
                             //====== Hotfix para a wordcloud ====== //
                             let listaPlot = [];
-                            let fatorDivisao = wordClouds[cnt/15][59];
+                            let fatorDivisao = wordClouds[Math.round(cnt/15)][wordClouds[Math.round(cnt/15)].length-1];
                        
-                            for (let k = 0; k < 60; k+=2) {
-                                listaPlot.push([wordClouds[cnt/15][k], wordClouds[cnt/15][k+1] / (fatorDivisao) / (20/100)]);                               
+                            for (let k = 0; k < wordClouds[Math.round(cnt/15)].length; k+=2) {
+                                listaPlot.push([wordClouds[Math.round(cnt/15)][k], wordClouds[Math.round(cnt/15)][k+1] / (fatorDivisao) / (20/100)]);                               
                             } 
                             contadorWD = 0;
                             let options = {
