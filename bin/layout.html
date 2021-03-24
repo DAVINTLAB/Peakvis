@@ -3,10 +3,9 @@
 
 <head>
     <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="picassoBackup.css">
-    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"> -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:thin,extra-light,light,100,200,300,400,500,600,700,800" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 </head>
 
 <body>
@@ -15,59 +14,93 @@
     <script src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/6.2.1/math.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/wordcloud2.js/1.1.1/wordcloud2.min.js"></script>
-    <div class="peakvis">
-        <ul>
-            <li><a href="#news"></a></li>
-            <li><a class="" href="layout.html"><img src="./logo.png" height="55" width="200"></a>
-            <li style="float:right"><a>
-                    <button class="wagGit" onclick="pagGithub()">
-                        <span class="icon">
-                            <i class="fa fa-github"></i>
-                        </span>
-                        <span>
-                            GitHub
-                        </span>
-                    </button></a>
-            </li>
-        </ul>
+	
+	
+<div class="peakvis"><!-- container -->    
+    <div class="row mb-3"><!-- cabeçalho -->    
+		<div class="col-lg-12"> 
+			<ul>
+				<li><a class="" href="layout.html"><img src="./logo.png" height="55" width="200" alt="PeakVis"></a></li>
+				<li style="float:right"><a>
+						<button class="wagGit" onclick="pagGithub()">
+							<span class="icon">
+								<i class="fa fa-github"></i>
+							</span>
+							<span>
+								GitHub
+							</span>
+						</button></a>
+				</li>
+			</ul>
+		</div>
+	</div><!-- close cabeçalho -->    
+	
+	<form name="formulario"><!-- submit area -->
+		<div class="row mb-2"> 
+					<div class="col-lg-4 col-sm-12 mb-2">
+						<input name="dadoss" type="text" class="wagText" placeholder="Data" value="demo.json">
+					</div>
+					<div class="col-lg-4 col-sm-12 mb-2">
+							<input name="videoo" type="text" class="wagText" placeholder="Video" value="demo.mp4">
+					</div>
 
-        <br><br>
-
-        <div style="vertical-align: middle;">
-            <p class="write alinhado">Highlight</p>
-            <input type="range" min="1" max="9" value="7" class="slider" id="slaider">
-        </div>
-
-        <br><br>
-
-        <form name="formulario">
-            <div class="row">
-                <div>
-                    <input name="dadoss" type="text" class="wagText" placeholder="Data" value="demo.json">
-                    <input name="videoo" type="text" class="wagText alinhado" placeholder="Video" value="demo.mp4">
-                </div>
-
-            </div>
-        </form>
-
-        <div>
+		</div>
+	</form><!-- close submit area --> 
+	
+	<div class="row mb-2"><!-- submit button --> 
+        <div class="col-lg-4 col-sm-3">
             <button type="submit" class="wagButton" onclick="plot(); return false">Submit</button>
-            <button class="wagButton rightsizeMajor" id="wtfbro">Highlight</button>
+		</div>
+		<div class="col-lg-4 col-sm-3">
+            <button class="wagButton" id="wtfbro">Highlight</button>
         </div>
+	</div> <!-- cloase submit button --> 
+	
+	<div class="row mb-3">	<!-- highlight bar --> 
+		<div class="col-lg-1 col-sm-4 mb-2"> 
+			<p>Highlight</p>
+		</div>
+		<div class="col-lg-2 col-sm-8 mb-2"> 
+			<input type="range" min="1" max="9" value="7" class="slider" id="slaider">
+		</div>
+	</div><!-- close highlight bar --> 
 
-        <div id="plotly_div_id"></div>
-
-        <div class="tweetsEvideo">
+    <div class="row border-top-area"><!-- grafico --> 
+		<h1>Gráfico de frequencia de tweets</h1>
+		<div id="plotly_div_id"></div>
+	</div><!-- close grafico --> 
+	
+	<div class="row border-top-area mb-5"><!-- video tweets area --> 
+	
+        <div class="col-lg-5">
+			<h1>Video Player</h1>
             <div id="video_container" class="video"></div>
+		</div>
+		<div class="col-lg-7">
+			<h1>Tweets</h1>
             <div id="plot_tweets" class=""></div>
         </div>
+		
+	</div>
 
-        <!-- <br><br> -->
-        <!-- lugar das word clouds -->
-        <canvas id="wordCloudTeste" width="600" height="500"></canvas>
-		<svg id='viz'></svg>
-    </div>
-    <script>
+       
+	<div class="row border-top-area"><!-- video tweets area -->
+		<div class="col-lg-6">
+			<h1>Nuvem de palavras mais frequentes</h1>
+	        <canvas id="wordCloudTeste" class="border-area" width="600" height="500"></canvas>
+		</div>
+		<div class="col-lg-6">
+			<h1>Grafo semântico</h1>
+			<svg id="viz" class="border-area"></svg>
+		</div>
+
+</div><!-- cloase container -->  
+
+	
+	
+	
+	<script>
+		
         function pagGithub() {
             window.location.assign("https://github.com/DAVINTLAB");
         }
@@ -148,6 +181,13 @@
                 //===================== Arrumar depois =======================
                 console.log(ey.length);
                 console.log(testeB.length);
+                let valor_proporcional30_regulado = 0;
+                if (testeB.length * 30 != ey.length) {
+                    //o valor proporcional eh a diferenca?
+                    valor_proporcional30_regulado = testeB.length * 30 - ey.length;
+                    console.log("valor " + valor_proporcional30_regulado);
+                }
+
                 let respX = [0];
                 let respY = [];
                 for (let i = 1; i < testeB.length; i++) {
@@ -171,7 +211,7 @@
                 marcadores.push(0);
                 for (let i = 0; i < marcadores.length - 1; i++) {
                     if (testeB[marcadores[i + 1]] - testeB[marcadores[i]] > reskein) {
-                        arrResp.push(marcadores[i] * 30);
+                        arrResp.push(marcadores[i] * 30 - valor_proporcional30_regulado);
                     }
                 }
                 document.getElementById("slaider").oninput = function () {
@@ -179,7 +219,7 @@
                     let reskein = math.quantileSeq(sorti, document.getElementById("slaider").value / 10)
                     for (let i = 0; i < marcadores.length - 1; i++) {
                         if (testeB[marcadores[i + 1]] - testeB[marcadores[i]] > reskein) {
-                            arrResp.push(marcadores[i] * 30);
+                            arrResp.push(marcadores[i] * 30 - valor_proporcional30_regulado);
                         }
                     }
                     respX = [];
