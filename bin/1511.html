@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="picassoBackup.css">
+</head>
+
+<body>
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/6.2.1/math.js"></script>
+    <div class="peakvis">
+        <ul>
+            <li><a href="#news"></a></li>
+            <li><a class="" href="layout.html"><img src="./logo.png" height="55" width="200"></a>
+            <li style="float:right"><a>
+                    <button class="wagGit" onclick="pagGithub()">
+                        <span class="icon">
+                            <i class="fa fa-github"></i>
+                        </span>
+                        <span>
+                            GitHub
+                        </span>
+                    </button></a>
+            </li>
+        </ul>
+
+        <br><br>
+
+        <div style="vertical-align: middle;">
+            <p class="write alinhado">Highlight</p>
+            <input type="range" min="1" max="9" value="7" class="slider" id="slaider">
+        </div>
+
+        <br><br>
+
+        <form name="formulario">
+            <div class="row">
+                <div>
+                    <input name="dadoss" type="text" class="wagText" placeholder="Data" value="bracrc_fullgame.json">
+                    <input name="videoo" type="text" class="wagText alinhado" placeholder="Video"
+                        value="brasilcarlos.m4v">
+                </div>
+
+            </div>
+        </form>
+
+        <div>
+            <button type="submit" class="wagButton" onclick="plot(); return false">Submit</button>
+            <button class="wagButton rightsizeMajor" id="wtfbro">Highlight</button>
+        </div>
+
+        <div id="plotly_div_id"></div>
+
+        <div class="tweetsEvideo">
+            <div id="video_container" class="video"></div>
+            <div id="plot_tweets" class=""></div>
+        </div>
+
+        <br><br>
+    </div>
+    <script>
+        function pagGithub() {
+            window.location.assign("https://github.com/DAVINTLAB");
+        }
+
+        function plotVideo() {
+            sessionStorage.nomeVideo = document.formulario.videoo.value;
+            $("#video_container").load("loadVideo.html");
+            document.getElementById("plot_tweets").className = "plot_tweets"
+        }
+
+        function plot() {
+            d3.json("/DATA/dados/" + document.formulario.dadoss.value, function (data) {
+
+                //criação dos eixos X e Y
+                horariosData = data;
+                var horarios = [];
+                var ex = [];
+                var ey = [];
+                let tweets = [];
+                let infos = [];
+                var count = 0;
+                for (var i = horariosData.length - 1; i >= 0; i--) {
+                    horarios.push(new Date(horariosData[i].created_at));
+                }
+
+                var started_time = new Date(JSON.parse(JSON.stringify(horarios[0])));
+                started_time.setSeconds(started_time.getSeconds() + 1);
+                for (var i = 0; i < horarios.length; i++) {
+                    if (horarios[i] >= started_time) {
+                        ey.push(count);
+                        started_time = new Date(JSON.parse(JSON.stringify(horarios[i])));
+                        ex.push(started_time);
+			//alteracao do dia 09/02/2019------------------------------------------
+			let choosen = horariosData[horarios.length -i-1];
+			for(var j = 1; j < count; j++){
+				if(horariosData[horarios.length-i-j] == undefined){break;}
+				//para os JSON's novos mudar retweets para retweets_count ou algo do tipo
+				if(horariosData[horarios.length-i-j].favorites > choosen.favorites){
+					choosen = horariosData[horarios.length-i-j];
+				}					
+			}
+			//---------------------------------------------------------------------
+                        tweets.push(choosen.text + "         [" + choosen.created_at + "]");
+                        infos.push("https://twitter.com/" + choosen.username + "/status/" + choosen.id)
+                        started_time.setSeconds(started_time.getSeconds() + 1);
+			count = 1;
+                    } else {
+                        count = count + 1;
+                    }
+                }
+
+                let testeA = [];
+                let testeB = [];
+                let count2 = 0;
+
+                let testeC = new Date(JSON.parse(JSON.stringify(horarios[0])));
+                testeC.setSeconds(testeC.getSeconds() + 30);
+                for (let i = 0; i < horarios.length; i++) {
+                    if (horarios[i] >= testeC) {
+                        testeB.push(count2);
+                        count2 = 1;
+                        testeC = new Date(JSON.parse(JSON.stringify(horarios[i])));
+                        testeA.push(testeC);
+                        testeC.setSeconds(testeC.getSeconds() + 30);
+                    } else {
+                        count2 = count2 + 1;
+                    }
+                }
+                //plot do grafico
+                let plotDiv = document.getElementById("plotly_div_id");
+                //===================== Arrumar depois =======================
+                console.log(ey.length);
+                console.log(testeB.length);
+                let respX = [0];
+                let respY = [];
+                for (let i = 1; i < testeB.length; i++) {
+                    respX[i] = i;
+                    if (testeB[i] > testeB[i - 1]) {
+                        respY[i] = 1;
+                    } else {
+                        respY[i] = 0;
+                    }
+                }
+
+                let sorti = JSON.parse(JSON.stringify(testeB)).sort((a, b) => a - b);
+                let reskein = math.quantileSeq(sorti, document.getElementById("slaider").value / 10)
+                let marcadores = [];
+                let arrResp = [];
+                for (let i = 1; i < respY.length; i++) {
+                    if ((respY[i] == 1 && respY[i - 1] == 0) || (respY[i] == 0 && respY[i - 1] == 1 && marcadores.length % 2 != 0)) {
+                        marcadores.push(i - 1);
+                    }
+                }
+                marcadores.push(0);
+                for (let i = 0; i < marcadores.length - 1; i++) {
+                    if (testeB[marcadores[i + 1]] - testeB[marcadores[i]] > reskein) {
+                        arrResp.push(marcadores[i] * 30);
+                    }
+                }
+                document.getElementById("slaider").oninput = function () {
+                    arrResp = [];
+                    let reskein = math.quantileSeq(sorti, document.getElementById("slaider").value / 10)
+                    for (let i = 0; i < marcadores.length - 1; i++) {
+                        if (testeB[marcadores[i + 1]] - testeB[marcadores[i]] > reskein) {
+                            arrResp.push(marcadores[i] * 30);
+                        }
+                    }
+                    respX = [];
+                    respY = [];
+                    for (let i = 0; i < arrResp.length; i++) {
+                        respX[i] = ex[arrResp[i]];
+                        respY[i] = ey[arrResp[i]];
+                    }
+
+                    g3 = {
+                        x: respX,
+                        y: respY,
+                        name: 'Início dos Picos',
+                        mode: 'markers',
+                        marker: {
+                            size: 10,
+                            color: '#7200dc'
+                        }
+                    }
+                    var data = [g1, g2, g3];
+                    indice = arrResp.length;
+                    Plotly.newPlot(plotDiv, data);
+                };
+                //============================================================
+                let cnt = 0;
+                let indice = arrResp.length;
+                let flag = 0;
+                let taPausado = true;
+                let media = 0;
+                let eixox = [];
+                let eixoy = [];
+
+                let g1 = {
+                    x: ex,
+                    y: ey,
+                    mode: 'lines',
+                    name: 'Tweets',
+                    line: { color: '#999aa7' }
+                }
+
+                let g2 = {
+                    x: [ex[0]],
+                    y: [ey[0]],
+                    mode: 'lines',
+                    name: 'Progresso',
+                    line: { color: '#0bb6e0' }
+                }
+
+                respX = [];
+                respY = [];
+                for (let i = 0; i < arrResp.length; i++) {
+                    respX[i] = ex[arrResp[i]];
+                    respY[i] = ey[arrResp[i]];
+                }
+
+                let g3 = {
+                    x: respX,
+                    y: respY,
+                    name: 'Início dos Picos',
+                    mode: 'markers',
+                    marker: {
+                        size: 10,
+                        color: '#7200dc'
+                    }
+                }
+
+                var data = [g1, g2, g3];
+
+                Plotly.newPlot(plotDiv, data);
+                plotVideo();
+
+                var interval = setInterval(function () {
+
+                    if (!taPausado) {
+                        var time = ex[cnt];
+
+                        eixox.push(time);
+                        eixoy.push(ey[cnt]);
+
+                        media = cnt - Math.round(document.getElementById("video").currentTime);
+
+                        if (media == 1 || media == 0) {
+                            var olderTime = time.setSeconds(time.getSeconds() - 1);
+                            var futureTime = time.setSeconds(time.getSeconds() + 1);
+                        } else {
+                            cnt = Math.round(document.getElementById("video").currentTime) + 1;
+
+                            var olderTime = time.setSeconds(time.getSeconds() - (media * -1));
+                            var futureTime = time.setSeconds(time.getSeconds() + (media * -1));
+
+                            //====== Hotfix para o grafico azul ====== //
+                            let newX = [];
+                            let newY = [];
+                            for (let i = 0; i <= cnt; i++) {
+                                newX.push(ex[i]);
+                                newY.push(ey[i]);
+                            }
+                            g2 = {
+                                //x: [ex[cnt]],
+                                //y: [ey[cnt]],
+                                x: newX,
+                                y: newY,
+                                mode: 'lines',
+                                name: 'Progresso',
+                                line: { color: '#0bb6e0' }
+                            }
+
+                            Plotly.newPlot(plotDiv, [g1, g2, g3]);
+                        }
+
+                        //38103981029318930120                                  
+                        document.getElementById("plot_tweets").innerHTML += "<p class='write'>" + tweets[cnt] + "</p>" + "<a class='write' href=" + infos[cnt] + ">LINK</a>";
+                        document.getElementById("plot_tweets").scrollTop = document.getElementById("plot_tweets").scrollHeight;
+                        //93280192831093810239
+                        var minuteView = {
+                            xaxis: {
+                                type: 'date',
+                                range: [olderTime, futureTime]
+                            }
+                        };
+
+                        var update = {
+                            x: [[], [ex[cnt]]],
+                            y: [[], [ey[cnt]]]
+                        }
+
+                        Plotly.relayout(plotDiv, minuteView);
+                        Plotly.extendTraces(plotDiv, update, [0, 1])
+                        cnt = cnt + 1;
+
+                        //serve para fazer o autoscale automaticamente (porque se nao fica ilegivel)
+                        document.querySelector('[data-title="Autoscale"]').click()
+                    }
+
+                    document.getElementById("video").onpause = function () {
+                        taPausado = true;
+                    }
+
+                    document.getElementById("video").onplay = function () {
+                        taPausado = false;
+                    }
+
+                    document.getElementById("wtfbro").onclick = function () {
+                        document.getElementById("video").currentTime = arrResp[indice % arrResp.length] - 1;
+                        indice++;
+                    }
+
+                }, 1000);
+            })
+        }
+    </script>
+</body>
