@@ -24,9 +24,9 @@ PeakVis is a visualization tool that allows uploading a recorded video of a live
 To operate the Peakvis it is necessary to have the minimum requirements listed below:
 
 - OS:
-  -- Windows 7 or superior
-  -- MacOS
-  -- GNU (Linux OS)
+  - Windows 7 or superior
+  - MacOS
+  - GNU (Linux OS)
 - Python 3.7 or superior (https://www.python.org/downloads/)
 - Node.js (https://nodejs.org/en/download/)
 - Flask 2.0.0 (https://pypi.org/project/Flask/2.0.0/)
