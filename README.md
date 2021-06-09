@@ -10,7 +10,7 @@ PeakVis is a visualization tool that allows uploading a recorded video of a live
   - [Processing the files](#processing-the-files)
 - [Visualization elements](#visualization-elements)
   - [Highlight](#highlight)
-  - [Tweets flow chart](#tweets-flow-chart)
+  - [Tweets line chart](#tweets-line-chart)
   - [Video player](#video-player)
   - [Tweet box](#tweet-box)
   - [Word cloud](#word-cloud)
@@ -40,17 +40,23 @@ To install the Peakvis project, you must first download the compressed folder, a
 ![alt text](https://media.discordapp.net/attachments/830590281966682193/842819333834670110/howtodown.png)
 
 After downloading the ZIP file, go to the file path, right click and select the better extraction option for you. The more common zipping programs for Windows are WinRAR and 7-Zip. MacOS and most Linux distros already have zipping tools.  
+ 
  ![alt text](https://media.discordapp.net/attachments/830590281966682193/843922715425112074/2.jpg) ![alt text](https://media.discordapp.net/attachments/830590281966682193/843922717374939139/1.jpg) ![alt text](https://media.discordapp.net/attachments/830590281966682193/843925251796107325/cats.jpg)
 
 After unzipping the folder, go to the _\Peakvis-master\build\VisualizadorDAVINT_ path and open the file named **_VisualizadorDAVINT_**.
-![alt text](https://cdn.discordapp.com/attachments/830590281966682193/842858029158498304/caminho_para_peakvis.png)
+
+  ![alt text](https://cdn.discordapp.com/attachments/830590281966682193/842858029158498304/caminho_para_peakvis.png)
+  
 This will open the Peakvis home interface.
 
 - The first time you open it **_is obrigatory to click on ajuda_** before anything else.
 - Note: ajuda translates to help.
+ 
   ![alt text](https://media.discordapp.net/attachments/830590281966682193/842826420324663326/data_visualizer.png)
 - Right after, click on "Instalar Dependências" and **wait** A command prompt will open and the Message must appear, informing that you have finished installing.
+ 
   ![alt text](https://media.discordapp.net/attachments/511284977409851402/725459031388586014/unknown.png)
+  
   ![alt text](https://media.discordapp.net/attachments/511284977409851402/725459501049970819/unknown.png)
 - Now you can click on the "Fechar" button and proceed.
 
@@ -69,6 +75,7 @@ To insert your .json file into the project, go to the **\Peakvis-master\bin\DATA
 
 - For demonstration, a JSON file named demo is already present in the folder.
 - Just drag your .json file to this path.
+ 
   ![alt text](https://media.discordapp.net/attachments/830590281966682193/842853958002540554/demojson.png)
 
 ### Inserting video into your application
@@ -77,6 +84,7 @@ To insert your .mp4 file into the project, go to the **\Peakvis-master\bin\DATA\
 
 - For demonstration, a video named demo is already present in the folder.
 - Just drag your .mp4 file to this path.
+  
   ![alt text](https://media.discordapp.net/attachments/830590281966682193/842851945352790056/demovideo2.png)
 
 ### Processing the files
@@ -100,17 +108,20 @@ Along this section, the application functionalities and features will be approac
 - The further to the left the less rigorous the definition of Highlight become.
 - The farther to the right the stricter the definition of Highlight is.
 - By clicking on the Highlight button, all the needed changes are processed.
-![alt text](https://media.discordapp.net/attachments/830590281966682193/842497651639189519/highlight_button.png)![alt text](https://media.discordapp.net/attachments/830590281966682193/842501041064640542/highlight-button2.png)
+
+  ![alt text](https://media.discordapp.net/attachments/830590281966682193/842497651639189519/highlight_button.png)![alt text](https://media.discordapp.net/attachments/830590281966682193/842501041064640542/highlight-button2.png)
 
 ### Tweets line chart
 - The _line chart of tweets_ shows the peaks of _tweets_ contained in the .json file as the first analysis graph. It is synced with the video and goes along with the .mp4 file time.
 - Already watched segments are colored blue, as opposed to the default unwatched grey lines.
 - The starting of the tweet peaks are indicated with a purple dot.
+  
   ![alt text](https://media.discordapp.net/attachments/511284977409851402/725465708909035590/unknown.png?width=1442&height=299)
 
 ### Video player
 - As the video player is synced with the other charts, you can pause and unpause any video at any time, pausing the other application elements too.
 - You can set the volume, put it on full screen, download the video and set it as a picture-in-picture player.
+  
   ![alt text](https://media.discordapp.net/attachments/830590281966682193/842865116814114816/videop.png)
 
 ### Tweet box
@@ -118,16 +129,18 @@ Along this section, the application functionalities and features will be approac
 the textual contents of the most retweeted _tweets_ at every second in a scrolling box.
 - Besides the _tweet content_, it shows its date and time posted in brackets.
 - It is also possible to access the _tweet addres_ by clicking on the highlighted "LINK" under its content.
-![alt text](https://media.discordapp.net/attachments/830590281966682193/842865515357798460/tweets.png)
+
+  ![alt text](https://media.discordapp.net/attachments/830590281966682193/842865515357798460/tweets.png)
 
 ### Word cloud
 - There is also a dynamic word cloud showing the most frequent words in the _tweets_ until the watched segment.
 - The application ignores several words known as stopwords, such as articles and prepositions (for example: "the", "so", and "on").
 - You can see and even set these words on the "STOPWORDS" file.
+  
   ![alt text](https://cdn.discordapp.com/attachments/830590281966682193/842865784437866516/cloudword.png)
 
 ### Semantic graph
--The semantic graph connects the most related words between themselves.
+- The semantic graph connects the most related words between themselves.
 - For example, the more related words to the word "final" are connected by grey lines, then linking words as "kaysar", "edição" and "#bbb18".
 - The graph is generated in real-time, providing a smooth animation along the video time.
 
