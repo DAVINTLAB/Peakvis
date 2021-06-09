@@ -130,6 +130,7 @@ the textual contents of the most retweeted _tweets_ at every second in a scrolli
 -The semantic graph connects the most related words between themselves.
 - For example, the more related words to the word "final" are connected by grey lines, then linking words as "kaysar", "edição" and "#bbb18".
 - The graph is generated in real-time, providing a smooth animation along the video time.
+
   ![alt text](https://media.discordapp.net/attachments/830590281966682193/842865964353191996/graphsem.png)
 
 
@@ -175,5 +176,3 @@ We are members of the Data Visualization and Interaction Lab (DaVInt) at PUCRS:
 - Isabel H. Manssour -- Researcher and Professor Coordinator of DaVInt -- 2017-current.
 
 More information can be found [here](https://www.inf.pucrs.br/davint/).
-
-> Written with [StackEdit](https://stackedit.io/).
