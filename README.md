@@ -1,4 +1,4 @@
-# Peakvis - WIP [![](https://img.shields.io/badge/JavaScript-yellow.svg)](https://www.javascript.com/) [![](https://img.shields.io/badge/python-3-blue.svg)](https://www.python.org/)
+# Peakvis [![](https://img.shields.io/badge/JavaScript-yellow.svg)](https://www.javascript.com/) [![](https://img.shields.io/badge/python-3-blue.svg)](https://www.python.org/)
 
 PeakVis is a visualization tool that allows uploading a recorded video of a live broadcast together with a file of _tweets_, comments of 280 characters made on the social network _Twitter_, related to the recorded program. It is an interactive tool that syncs the video recording with a responsive line graph representing the total number of _tweets_ from each moment, the top messages, a dynamic word cloud, and a semantic graph showing word correlation.
 
