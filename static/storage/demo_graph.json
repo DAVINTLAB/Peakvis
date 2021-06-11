@@ -1,0 +1,949 @@
+{
+    "directed": false,
+    "multigraph": false,
+    "graph": {},
+    "nodes": [
+        {
+            "in_degree": 2217,
+            "group": 0,
+            "id": "la"
+        },
+        {
+            "in_degree": 13451,
+            "group": 1,
+            "id": "#bracrc"
+        },
+        {
+            "in_degree": 7485,
+            "group": 2,
+            "id": "#worldcup"
+        },
+        {
+            "in_degree": 14150,
+            "group": 3,
+            "id": "#bra"
+        },
+        {
+            "in_degree": 3293,
+            "group": 4,
+            "id": "coutinho"
+        },
+        {
+            "in_degree": 3440,
+            "group": 5,
+            "id": "#copa2018"
+        },
+        {
+            "in_degree": 1623,
+            "group": 6,
+            "id": "#brasilganha"
+        },
+        {
+            "in_degree": 1886,
+            "group": 7,
+            "id": "brasil"
+        },
+        {
+            "in_degree": 2050,
+            "group": 8,
+            "id": "gol"
+        },
+        {
+            "in_degree": 2648,
+            "group": 9,
+            "id": "10"
+        },
+        {
+            "in_degree": 1466,
+            "group": 10,
+            "id": "0"
+        },
+        {
+            "in_degree": 1829,
+            "group": 11,
+            "id": "rica"
+        },
+        {
+            "in_degree": 2257,
+            "group": 12,
+            "id": "en"
+        },
+        {
+            "in_degree": 2177,
+            "group": 13,
+            "id": "el"
+        },
+        {
+            "in_degree": 1890,
+            "group": 14,
+            "id": "y"
+        },
+        {
+            "in_degree": 6745,
+            "group": 15,
+            "id": "#crc"
+        },
+        {
+            "in_degree": 2665,
+            "group": 16,
+            "id": "neymar"
+        },
+        {
+            "in_degree": 2929,
+            "group": 17,
+            "id": "#rusia2018"
+        },
+        {
+            "in_degree": 1549,
+            "group": 18,
+            "id": "un"
+        },
+        {
+            "in_degree": 2107,
+            "group": 19,
+            "id": "costa"
+        }
+    ],
+    "links": [
+        {
+            "source": "la",
+            "target": "#bracrc"
+        },
+        {
+            "source": "la",
+            "target": "#bra"
+        },
+        {
+            "source": "la",
+            "target": "#crc"
+        },
+        {
+            "source": "la",
+            "target": "#rusia2018"
+        },
+        {
+            "source": "la",
+            "target": "la"
+        },
+        {
+            "source": "la",
+            "target": "el"
+        },
+        {
+            "source": "la",
+            "target": "un"
+        },
+        {
+            "source": "la",
+            "target": "en"
+        },
+        {
+            "source": "la",
+            "target": "costa"
+        },
+        {
+            "source": "la",
+            "target": "rica"
+        },
+        {
+            "source": "la",
+            "target": "y"
+        },
+        {
+            "source": "la",
+            "target": "coutinho"
+        },
+        {
+            "source": "la",
+            "target": "#worldcup"
+        },
+        {
+            "source": "la",
+            "target": "neymar"
+        },
+        {
+            "source": "la",
+            "target": "0"
+        },
+        {
+            "source": "la",
+            "target": "10"
+        },
+        {
+            "source": "la",
+            "target": "brasil"
+        },
+        {
+            "source": "la",
+            "target": "#copa2018"
+        },
+        {
+            "source": "la",
+            "target": "gol"
+        },
+        {
+            "source": "la",
+            "target": "#brasilganha"
+        },
+        {
+            "source": "#bracrc",
+            "target": "#worldcup"
+        },
+        {
+            "source": "#bracrc",
+            "target": "#bra"
+        },
+        {
+            "source": "#bracrc",
+            "target": "#brasilganha"
+        },
+        {
+            "source": "#bracrc",
+            "target": "costa"
+        },
+        {
+            "source": "#bracrc",
+            "target": "rica"
+        },
+        {
+            "source": "#bracrc",
+            "target": "0"
+        },
+        {
+            "source": "#bracrc",
+            "target": "#copa2018"
+        },
+        {
+            "source": "#bracrc",
+            "target": "#crc"
+        },
+        {
+            "source": "#bracrc",
+            "target": "neymar"
+        },
+        {
+            "source": "#bracrc",
+            "target": "#rusia2018"
+        },
+        {
+            "source": "#bracrc",
+            "target": "en"
+        },
+        {
+            "source": "#bracrc",
+            "target": "brasil"
+        },
+        {
+            "source": "#bracrc",
+            "target": "gol"
+        },
+        {
+            "source": "#bracrc",
+            "target": "un"
+        },
+        {
+            "source": "#bracrc",
+            "target": "y"
+        },
+        {
+            "source": "#bracrc",
+            "target": "10"
+        },
+        {
+            "source": "#bracrc",
+            "target": "coutinho"
+        },
+        {
+            "source": "#bracrc",
+            "target": "el"
+        },
+        {
+            "source": "#bracrc",
+            "target": "#bracrc"
+        },
+        {
+            "source": "#worldcup",
+            "target": "#bra"
+        },
+        {
+            "source": "#worldcup",
+            "target": "#brasilganha"
+        },
+        {
+            "source": "#worldcup",
+            "target": "el"
+        },
+        {
+            "source": "#worldcup",
+            "target": "#crc"
+        },
+        {
+            "source": "#worldcup",
+            "target": "#rusia2018"
+        },
+        {
+            "source": "#worldcup",
+            "target": "gol"
+        },
+        {
+            "source": "#worldcup",
+            "target": "brasil"
+        },
+        {
+            "source": "#worldcup",
+            "target": "neymar"
+        },
+        {
+            "source": "#worldcup",
+            "target": "0"
+        },
+        {
+            "source": "#worldcup",
+            "target": "en"
+        },
+        {
+            "source": "#worldcup",
+            "target": "#copa2018"
+        },
+        {
+            "source": "#worldcup",
+            "target": "costa"
+        },
+        {
+            "source": "#worldcup",
+            "target": "rica"
+        },
+        {
+            "source": "#worldcup",
+            "target": "coutinho"
+        },
+        {
+            "source": "#worldcup",
+            "target": "10"
+        },
+        {
+            "source": "#worldcup",
+            "target": "#worldcup"
+        },
+        {
+            "source": "#worldcup",
+            "target": "y"
+        },
+        {
+            "source": "#worldcup",
+            "target": "un"
+        },
+        {
+            "source": "#bra",
+            "target": "0"
+        },
+        {
+            "source": "#bra",
+            "target": "#crc"
+        },
+        {
+            "source": "#bra",
+            "target": "#rusia2018"
+        },
+        {
+            "source": "#bra",
+            "target": "#copa2018"
+        },
+        {
+            "source": "#bra",
+            "target": "#brasilganha"
+        },
+        {
+            "source": "#bra",
+            "target": "neymar"
+        },
+        {
+            "source": "#bra",
+            "target": "#bra"
+        },
+        {
+            "source": "#bra",
+            "target": "coutinho"
+        },
+        {
+            "source": "#bra",
+            "target": "y"
+        },
+        {
+            "source": "#bra",
+            "target": "el"
+        },
+        {
+            "source": "#bra",
+            "target": "brasil"
+        },
+        {
+            "source": "#bra",
+            "target": "costa"
+        },
+        {
+            "source": "#bra",
+            "target": "rica"
+        },
+        {
+            "source": "#bra",
+            "target": "un"
+        },
+        {
+            "source": "#bra",
+            "target": "en"
+        },
+        {
+            "source": "#bra",
+            "target": "10"
+        },
+        {
+            "source": "#bra",
+            "target": "gol"
+        },
+        {
+            "source": "coutinho",
+            "target": "neymar"
+        },
+        {
+            "source": "coutinho",
+            "target": "costa"
+        },
+        {
+            "source": "coutinho",
+            "target": "rica"
+        },
+        {
+            "source": "coutinho",
+            "target": "0"
+        },
+        {
+            "source": "coutinho",
+            "target": "y"
+        },
+        {
+            "source": "coutinho",
+            "target": "coutinho"
+        },
+        {
+            "source": "coutinho",
+            "target": "#copa2018"
+        },
+        {
+            "source": "coutinho",
+            "target": "#crc"
+        },
+        {
+            "source": "coutinho",
+            "target": "el"
+        },
+        {
+            "source": "coutinho",
+            "target": "en"
+        },
+        {
+            "source": "coutinho",
+            "target": "#rusia2018"
+        },
+        {
+            "source": "coutinho",
+            "target": "brasil"
+        },
+        {
+            "source": "coutinho",
+            "target": "10"
+        },
+        {
+            "source": "coutinho",
+            "target": "gol"
+        },
+        {
+            "source": "coutinho",
+            "target": "#brasilganha"
+        },
+        {
+            "source": "coutinho",
+            "target": "un"
+        },
+        {
+            "source": "#copa2018",
+            "target": "#brasilganha"
+        },
+        {
+            "source": "#copa2018",
+            "target": "brasil"
+        },
+        {
+            "source": "#copa2018",
+            "target": "#crc"
+        },
+        {
+            "source": "#copa2018",
+            "target": "neymar"
+        },
+        {
+            "source": "#copa2018",
+            "target": "0"
+        },
+        {
+            "source": "#copa2018",
+            "target": "#copa2018"
+        },
+        {
+            "source": "#copa2018",
+            "target": "#rusia2018"
+        },
+        {
+            "source": "#copa2018",
+            "target": "gol"
+        },
+        {
+            "source": "#copa2018",
+            "target": "costa"
+        },
+        {
+            "source": "#copa2018",
+            "target": "rica"
+        },
+        {
+            "source": "#copa2018",
+            "target": "10"
+        },
+        {
+            "source": "#copa2018",
+            "target": "en"
+        },
+        {
+            "source": "#copa2018",
+            "target": "el"
+        },
+        {
+            "source": "#copa2018",
+            "target": "y"
+        },
+        {
+            "source": "#copa2018",
+            "target": "un"
+        },
+        {
+            "source": "#brasilganha",
+            "target": "brasil"
+        },
+        {
+            "source": "#brasilganha",
+            "target": "#crc"
+        },
+        {
+            "source": "#brasilganha",
+            "target": "neymar"
+        },
+        {
+            "source": "#brasilganha",
+            "target": "#brasilganha"
+        },
+        {
+            "source": "#brasilganha",
+            "target": "en"
+        },
+        {
+            "source": "#brasilganha",
+            "target": "costa"
+        },
+        {
+            "source": "#brasilganha",
+            "target": "rica"
+        },
+        {
+            "source": "#brasilganha",
+            "target": "gol"
+        },
+        {
+            "source": "#brasilganha",
+            "target": "0"
+        },
+        {
+            "source": "#brasilganha",
+            "target": "y"
+        },
+        {
+            "source": "#brasilganha",
+            "target": "un"
+        },
+        {
+            "source": "#brasilganha",
+            "target": "#rusia2018"
+        },
+        {
+            "source": "#brasilganha",
+            "target": "10"
+        },
+        {
+            "source": "#brasilganha",
+            "target": "el"
+        },
+        {
+            "source": "brasil",
+            "target": "neymar"
+        },
+        {
+            "source": "brasil",
+            "target": "el"
+        },
+        {
+            "source": "brasil",
+            "target": "#crc"
+        },
+        {
+            "source": "brasil",
+            "target": "#rusia2018"
+        },
+        {
+            "source": "brasil",
+            "target": "brasil"
+        },
+        {
+            "source": "brasil",
+            "target": "costa"
+        },
+        {
+            "source": "brasil",
+            "target": "rica"
+        },
+        {
+            "source": "brasil",
+            "target": "0"
+        },
+        {
+            "source": "brasil",
+            "target": "en"
+        },
+        {
+            "source": "brasil",
+            "target": "y"
+        },
+        {
+            "source": "brasil",
+            "target": "10"
+        },
+        {
+            "source": "brasil",
+            "target": "gol"
+        },
+        {
+            "source": "brasil",
+            "target": "un"
+        },
+        {
+            "source": "gol",
+            "target": "neymar"
+        },
+        {
+            "source": "gol",
+            "target": "#crc"
+        },
+        {
+            "source": "gol",
+            "target": "gol"
+        },
+        {
+            "source": "gol",
+            "target": "y"
+        },
+        {
+            "source": "gol",
+            "target": "el"
+        },
+        {
+            "source": "gol",
+            "target": "en"
+        },
+        {
+            "source": "gol",
+            "target": "#rusia2018"
+        },
+        {
+            "source": "gol",
+            "target": "0"
+        },
+        {
+            "source": "gol",
+            "target": "costa"
+        },
+        {
+            "source": "gol",
+            "target": "rica"
+        },
+        {
+            "source": "gol",
+            "target": "un"
+        },
+        {
+            "source": "gol",
+            "target": "10"
+        },
+        {
+            "source": "10",
+            "target": "#rusia2018"
+        },
+        {
+            "source": "10",
+            "target": "#crc"
+        },
+        {
+            "source": "10",
+            "target": "el"
+        },
+        {
+            "source": "10",
+            "target": "costa"
+        },
+        {
+            "source": "10",
+            "target": "rica"
+        },
+        {
+            "source": "10",
+            "target": "0"
+        },
+        {
+            "source": "10",
+            "target": "neymar"
+        },
+        {
+            "source": "10",
+            "target": "en"
+        },
+        {
+            "source": "10",
+            "target": "un"
+        },
+        {
+            "source": "10",
+            "target": "y"
+        },
+        {
+            "source": "10",
+            "target": "10"
+        },
+        {
+            "source": "0",
+            "target": "#crc"
+        },
+        {
+            "source": "0",
+            "target": "neymar"
+        },
+        {
+            "source": "0",
+            "target": "#rusia2018"
+        },
+        {
+            "source": "0",
+            "target": "en"
+        },
+        {
+            "source": "0",
+            "target": "costa"
+        },
+        {
+            "source": "0",
+            "target": "rica"
+        },
+        {
+            "source": "0",
+            "target": "el"
+        },
+        {
+            "source": "0",
+            "target": "un"
+        },
+        {
+            "source": "0",
+            "target": "y"
+        },
+        {
+            "source": "0",
+            "target": "0"
+        },
+        {
+            "source": "rica",
+            "target": "costa"
+        },
+        {
+            "source": "rica",
+            "target": "rica"
+        },
+        {
+            "source": "rica",
+            "target": "#crc"
+        },
+        {
+            "source": "rica",
+            "target": "un"
+        },
+        {
+            "source": "rica",
+            "target": "en"
+        },
+        {
+            "source": "rica",
+            "target": "neymar"
+        },
+        {
+            "source": "rica",
+            "target": "#rusia2018"
+        },
+        {
+            "source": "rica",
+            "target": "el"
+        },
+        {
+            "source": "rica",
+            "target": "y"
+        },
+        {
+            "source": "en",
+            "target": "#crc"
+        },
+        {
+            "source": "en",
+            "target": "y"
+        },
+        {
+            "source": "en",
+            "target": "neymar"
+        },
+        {
+            "source": "en",
+            "target": "en"
+        },
+        {
+            "source": "en",
+            "target": "#rusia2018"
+        },
+        {
+            "source": "en",
+            "target": "el"
+        },
+        {
+            "source": "en",
+            "target": "un"
+        },
+        {
+            "source": "en",
+            "target": "costa"
+        },
+        {
+            "source": "el",
+            "target": "#crc"
+        },
+        {
+            "source": "el",
+            "target": "#rusia2018"
+        },
+        {
+            "source": "el",
+            "target": "costa"
+        },
+        {
+            "source": "el",
+            "target": "y"
+        },
+        {
+            "source": "el",
+            "target": "el"
+        },
+        {
+            "source": "el",
+            "target": "neymar"
+        },
+        {
+            "source": "el",
+            "target": "un"
+        },
+        {
+            "source": "y",
+            "target": "neymar"
+        },
+        {
+            "source": "y",
+            "target": "un"
+        },
+        {
+            "source": "y",
+            "target": "#crc"
+        },
+        {
+            "source": "y",
+            "target": "#rusia2018"
+        },
+        {
+            "source": "y",
+            "target": "y"
+        },
+        {
+            "source": "y",
+            "target": "costa"
+        },
+        {
+            "source": "#crc",
+            "target": "#rusia2018"
+        },
+        {
+            "source": "#crc",
+            "target": "neymar"
+        },
+        {
+            "source": "#crc",
+            "target": "#crc"
+        },
+        {
+            "source": "#crc",
+            "target": "costa"
+        },
+        {
+            "source": "#crc",
+            "target": "un"
+        },
+        {
+            "source": "neymar",
+            "target": "#rusia2018"
+        },
+        {
+            "source": "neymar",
+            "target": "costa"
+        },
+        {
+            "source": "neymar",
+            "target": "un"
+        },
+        {
+            "source": "neymar",
+            "target": "neymar"
+        },
+        {
+            "source": "#rusia2018",
+            "target": "costa"
+        },
+        {
+            "source": "#rusia2018",
+            "target": "un"
+        },
+        {
+            "source": "#rusia2018",
+            "target": "#rusia2018"
+        },
+        {
+            "source": "un",
+            "target": "un"
+        },
+        {
+            "source": "un",
+            "target": "costa"
+        },
+        {
+            "source": "costa",
+            "target": "costa"
+        }
+    ]
+}

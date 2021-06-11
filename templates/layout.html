@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html>
+<title>PeakVis - Crowd Based Peak Visualizer</title>
+<head>
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:thin,extra-light,light,100,200,300,400,500,600,700,800" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+</head>
+
+<body>
+    <script src='https://d3js.org/d3.v5.min.js'></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/6.2.1/math.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wordcloud2.js/1.1.1/wordcloud2.min.js"></script>
+
+
+<div class="peakvis"><!-- container -->
+    <div class="row mb-3"><!-- cabeçalho -->
+		<div class="col-lg-12">
+			<ul>
+				<li><a class="" href="layout.html"><img src="static/logo.png" height="55" width="200" alt="PeakVis"></a></li>
+				<li style="float:right"><a>
+						<button class="wagGit" onclick="pagGithub()">
+							<span class="icon">
+								<i class="fa fa-github"></i>
+							</span>
+							<span>
+								GitHub
+							</span>
+						</button></a>
+				</li>
+			</ul>
+		</div>
+	</div><!-- close cabeçalho -->
+
+	<form name="formulario"><!-- submit area -->
+		<div class="row mb-2">
+					<div class="col-lg-4 col-sm-12 mb-2">
+						<input name="dadoss" type="text" class="wagText" placeholder="Data" value="demo.json">
+					</div>
+					<div class="col-lg-4 col-sm-12 mb-2">
+							<input name="videoo" type="text" class="wagText" placeholder="Video" value="demo.mp4">
+					</div>
+
+		</div>
+	</form><!-- close submit area -->
+
+	<div class="row mb-2"><!-- submit button -->
+        <div class="col-lg-4 col-sm-3">
+            <button type="submit" class="wagButton" onclick="plot(); return false">Submit</button>
+		</div>
+		<div class="col-lg-4 col-sm-3">
+            <button class="wagButton" id="wtfbro">Highlight</button>
+        </div>
+	</div> <!-- cloase submit button -->
+
+	<div class="row mb-3">	<!-- highlight bar -->
+		<div class="col-lg-1 col-sm-4 mb-2">
+			<p>Highlight Sensitivity</p>
+		</div>
+		<div class="col-lg-2 col-sm-8 mb-2">
+			<input type="range" min="1" max="9" value="7" class="slider" id="slaider">
+		</div>
+	</div><!-- close highlight bar -->
+
+    <div class="row border-top-area"><!-- grafico -->
+		<h1>Tweet Volume Line Chart</h1>
+		<div id="plotly_div_id"></div>
+	</div><!-- close grafico -->
+
+	<div class="row border-top-area mb-5"><!-- video tweets area -->
+
+        <div class="col-lg-5">
+			<h1>Video Player</h1>
+            <div id="video_container" class="video"></div>
+		</div>
+		<div class="col-lg-7">
+			<h1>Most Retweeted Tweets</h1>
+            <div id="plot_tweets" class=""></div>
+        </div>
+
+	</div>
+
+
+	<div class="row border-top-area"><!-- video tweets area -->
+		<div class="col-lg-6">
+			<h1>Frequently Said Words</h1>
+	        <canvas id="wordCloudTeste" class="border-area" width="600" height="500"></canvas>
+		</div>
+		<div class="col-lg-6">
+			<h1>Semantic Network</h1>
+			<svg id="viz" class="border-area"></svg>
+		</div>
+
+</div><!-- cloase container -->
+
+
+
+
+	<script>
+
+
+
+        function sleep(milliseconds) {
+            const date = Date.now();
+            let currentDate = null;
+            do {
+            currentDate = Date.now();
+            } while (currentDate - date < milliseconds);
+        }
+
+        function pagGithub() {
+            window.location.assign("https://github.com/DAVINTLAB");
+        }
+
+        function plotVideo() {
+            sessionStorage.nomeVideo = document.formulario.videoo.value;
+            console.log(sessionStorage.nomeVideo)
+            $("#video_container").load("static/loadVideo.html");
+            document.getElementById("plot_tweets").className = "plot_tweets"
+        }
+
+        function plot() {
+            d3.json("/static/DATA/dados/" + document.formulario.dadoss.value).then(function (data) {
+                fetch('/preprocess?a='+document.formulario.dadoss.value).then((response) => {
+                  return response.json();
+                })
+                sleep(10000);
+                //criação dos eixos X e Y
+                horariosData = data;
+                var horarios = [];
+                var ex = [];
+                var ey = [];
+                let tweets = [];
+				        let wordClouds = [];
+                let infos = [];
+                var count = 0;
+
+        //d3.text("static/DATA/testeWC.txt").then(function(text) {
+				d3.text("static/storage/" + document.formulario.dadoss.value.split('.')[0] + "_WC.txt").then(function(text) {
+                    let aux = text.split("\n");
+
+                    for (let k = 0; k < aux.length; k++) {
+                        wordClouds.push(aux[k].split(","));
+                        for (let m = 1; m < 20; m+=2) {
+                            wordClouds[k][m] = Number.parseInt(wordClouds[k][m]);
+                        }
+                    }
+					console.log(wordClouds.length);
+                });
+
+                for (var i = horariosData.length - 1; i >= 0; i--) {
+                    horarios.push(new Date(horariosData[i].created_at));
+                }
+
+                var started_time = new Date(JSON.parse(JSON.stringify(horarios[0])));
+                started_time.setSeconds(started_time.getSeconds() + 1);
+                for (var i = 0; i < horarios.length; i++) {
+                    if (horarios[i] >= started_time) {
+                        ey.push(count);
+                        started_time = new Date(JSON.parse(JSON.stringify(horarios[i])));
+                        ex.push(started_time);
+                        tweets.push(horariosData[horarios.length - i - 1].text + "         [" + horariosData[horarios.length - i - 1].created_at + "]");
+                        infos.push("https://twitter.com/" + horariosData[horarios.length - i - 1].username + "/status/" + horariosData[horarios.length - i - 1].id)
+                        started_time.setSeconds(started_time.getSeconds() + 1);
+                        //contadorWD = contadorWD + 1;
+                        count = 1;
+                    } else {
+                        count = count + 1;
+                    }
+                }
+
+                //console.log(words);
+
+                let testeA = [];
+                let testeB = [];
+                let count2 = 0;
+
+                let testeC = new Date(JSON.parse(JSON.stringify(horarios[0])));
+                testeC.setSeconds(testeC.getSeconds() + 30);
+                for (let i = 0; i < horarios.length; i++) {
+                    if (horarios[i] >= testeC) {
+                        testeB.push(count2);
+                        count2 = 1;
+                        testeC = new Date(JSON.parse(JSON.stringify(horarios[i])));
+                        testeA.push(testeC);
+                        testeC.setSeconds(testeC.getSeconds() + 30);
+                    } else {
+                        count2 = count2 + 1;
+                    }
+                }
+                //plot do grafico
+                let plotDiv = document.getElementById("plotly_div_id");
+                //===================== Arrumar depois =======================
+                console.log(ey.length);
+                console.log(testeB.length);
+                let valor_proporcional30_regulado = 0;
+                if (testeB.length * 30 != ey.length) {
+                    //o valor proporcional eh a diferenca?
+                    valor_proporcional30_regulado = testeB.length * 30 - ey.length;
+                    console.log("valor " + valor_proporcional30_regulado);
+                }
+
+                let respX = [0];
+                let respY = [];
+                for (let i = 1; i < testeB.length; i++) {
+                    respX[i] = i;
+                    if (testeB[i] > testeB[i - 1]) {
+                        respY[i] = 1;
+                    } else {
+                        respY[i] = 0;
+                    }
+                }
+
+                let sorti = JSON.parse(JSON.stringify(testeB)).sort((a, b) => a - b);
+                let reskein = math.quantileSeq(sorti, document.getElementById("slaider").value / 10)
+                let marcadores = [];
+                let arrResp = [];
+                for (let i = 1; i < respY.length; i++) {
+                    if ((respY[i] == 1 && respY[i - 1] == 0) || (respY[i] == 0 && respY[i - 1] == 1 && marcadores.length % 2 != 0)) {
+                        marcadores.push(i - 1);
+                    }
+                }
+                marcadores.push(0);
+                for (let i = 0; i < marcadores.length - 1; i++) {
+                    if (testeB[marcadores[i + 1]] - testeB[marcadores[i]] > reskein) {
+                        arrResp.push(marcadores[i] * 30 - valor_proporcional30_regulado);
+                    }
+                }
+                document.getElementById("slaider").oninput = function () {
+                    arrResp = [];
+                    let reskein = math.quantileSeq(sorti, document.getElementById("slaider").value / 10)
+                    for (let i = 0; i < marcadores.length - 1; i++) {
+                        if (testeB[marcadores[i + 1]] - testeB[marcadores[i]] > reskein) {
+                            arrResp.push(marcadores[i] * 30 - valor_proporcional30_regulado);
+                        }
+                    }
+                    respX = [];
+                    respY = [];
+                    for (let i = 0; i < arrResp.length; i++) {
+                        respX[i] = ex[arrResp[i]];
+                        respY[i] = ey[arrResp[i]];
+                    }
+
+                    g3 = {
+                        x: respX,
+                        y: respY,
+                        name: 'Início dos Picos',
+                        mode: 'markers',
+                        marker: {
+                            size: 10,
+                            color: '#7200dc'
+                        }
+                    }
+                    var data = [g1, g2, g3];
+                    indice = arrResp.length;
+                    Plotly.newPlot(plotDiv, data);
+                };
+                //============================================================
+                let cnt = 0;
+                let indice = arrResp.length;
+                let taPausado = true;
+                let media = 0;
+                let eixox = [];
+                let eixoy = [];
+
+                let g1 = {
+                    x: ex,
+                    y: ey,
+                    mode: 'lines',
+                    name: 'Tweets',
+                    line: { color: '#999aa7' }
+                }
+
+                let g2 = {
+                    x: [ex[0]],
+                    y: [ey[0]],
+                    mode: 'lines',
+                    name: 'Progress',
+                    line: { color: '#0bb6e0' }
+                }
+
+                respX = [];
+                respY = [];
+                for (let i = 0; i < arrResp.length; i++) {
+                    respX[i] = ex[arrResp[i]];
+                    respY[i] = ey[arrResp[i]];
+                }
+
+                let g3 = {
+                    x: respX,
+                    y: respY,
+                    name: 'Peak Start',
+                    mode: 'markers',
+                    marker: {
+                        size: 10,
+                        color: '#7200dc'
+                    }
+                }
+
+                var data = [g1, g2, g3];
+
+                Plotly.newPlot(plotDiv, data);
+                plotVideo();
+
+                var interval = setInterval(function () {
+
+                    if (!taPausado) {
+                        var time = ex[cnt];
+
+                        eixox.push(time);
+                        eixoy.push(ey[cnt]);
+
+                        //*****coisas usadas para gerar as wordClouds*****
+                        if (cnt % 15 == 0) {
+
+							let listaPlot = [];
+                            let fatorDivisao = wordClouds[Math.round(cnt/15)][wordClouds[Math.round(cnt/15)].length-1];
+
+                            for (let k = 0; k < wordClouds[Math.round(cnt/15)].length; k+=2) {
+                                listaPlot.push([wordClouds[Math.round(cnt/15)][k], wordClouds[Math.round(cnt/15)][k+1] / (fatorDivisao) / (20/100)]);
+                            }
+                            contadorWD = 0;
+                            let options = {
+                                list: listaPlot,
+                                gridSize: 18,
+                                weightFactor: 3,
+                                fontFamily: 'Montserrat, cursive, sans-serif',
+								color: function (word, weight) {
+                                    return (Math.floor(Math.random()*weight) % 2 == 0) ? '#7200dc' : '#0bb6e0';
+                                },
+                                hover: window.drawBox,
+                                backgroundColor: '#ffffff'
+                            };
+                            WordCloud(document.getElementById('wordCloudTeste'), options);
+                        }
+                        //*****final das coisas usadas para gerar as wordClouds*****
+
+                        media = cnt - Math.round(document.getElementById("video").currentTime);
+
+                        if (media == 1 || media == 0) {
+                            var olderTime = time.setSeconds(time.getSeconds() - 1);
+                            var futureTime = time.setSeconds(time.getSeconds() + 1);
+                        } else {
+                            cnt = Math.round(document.getElementById("video").currentTime) + 1;
+
+                            var olderTime = time.setSeconds(time.getSeconds() - (media * -1));
+                            var futureTime = time.setSeconds(time.getSeconds() + (media * -1));
+
+                            //====== Hotfix para a wordcloud ====== //
+                            let listaPlot = [];
+                            let fatorDivisao = wordClouds[Math.round(cnt/15)][wordClouds[Math.round(cnt/15)].length-1];
+
+                            for (let k = 0; k < wordClouds[Math.round(cnt/15)].length; k+=2) {
+                                listaPlot.push([wordClouds[Math.round(cnt/15)][k], wordClouds[Math.round(cnt/15)][k+1] / (fatorDivisao) / (20/100)]);
+                            }
+                            contadorWD = 0;
+                            let options = {
+                                list: listaPlot,
+                                gridSize: 18,
+                                weightFactor: 3,
+                                fontFamily: 'Montserrat, cursive, sans-serif',
+								color: function (word, weight) {
+                                    return (Math.floor(Math.random()*weight) % 2 == 0) ? '#7200dc' : '#0bb6e0';
+                                },
+                                hover: window.drawBox,
+                                backgroundColor: '#ffffff'
+                            };
+                            WordCloud(document.getElementById('wordCloudTeste'), options);
+
+                            //====== ========================== ====== //
+
+                            //====== Hotfix para o grafico azul ====== //
+                            let newX = [];
+                            let newY = [];
+                            for (let i = 0; i <= cnt; i++) {
+                                newX.push(ex[i]);
+                                newY.push(ey[i]);
+                            }
+                            g2 = {
+                                //x: [ex[cnt]],
+                                //y: [ey[cnt]],
+                                x: newX,
+                                y: newY,
+                                mode: 'lines',
+                                name: 'Progresso',
+                                line: { color: '#0bb6e0' }
+                            }
+
+                            Plotly.newPlot(plotDiv, [g1, g2, g3]);
+                        }
+
+                        //38103981029318930120
+                        document.getElementById("plot_tweets").innerHTML += "<p class='write'>" + tweets[cnt] + "</p>" + "<a class='write' href=" + infos[cnt] + ">LINK</a>";
+                        document.getElementById("plot_tweets").scrollTop = document.getElementById("plot_tweets").scrollHeight;
+                        //93280192831093810239
+                        var minuteView = {
+                            xaxis: {
+                                type: 'date',
+                                range: [olderTime, futureTime]
+                            }
+                        };
+
+                        var update = {
+                            x: [[], [ex[cnt]]],
+                            y: [[], [ey[cnt]]]
+                        }
+
+                        Plotly.relayout(plotDiv, minuteView);
+                        Plotly.extendTraces(plotDiv, update, [0, 1])
+                        cnt = cnt + 1;
+
+                        //serve para fazer o autoscale automaticamente (porque se nao fica ilegivel)
+                        document.querySelector('[data-title="Autoscale"]').click()
+                    }
+
+                    document.getElementById("video").onpause = function () {
+                        taPausado = true;
+                    }
+
+                    document.getElementById("video").onplay = function () {
+                        taPausado = false;
+                    }
+
+                    document.getElementById("wtfbro").onclick = function () {
+                        document.getElementById("video").currentTime = arrResp[indice % arrResp.length] - 1;
+                        indice++;
+                    }
+
+                }, 1000);
+            })
+
+
+    var width = 600;
+    var height = 500;
+    var color = d3.scaleOrdinal(d3.schemeCategory10);
+    //document.formulario.dadoss.value
+    //d3.json("static/bbb-grafo-semantico.json").then(function (graph) {
+    d3.json("static/storage/" + document.formulario.dadoss.value.split('.')[0] + "_graph.json").then(function (graph) {
+        var label = {
+            'nodes': [],
+            'links': []
+        };
+        graph.nodes.forEach(function (d, i) {
+            label.nodes.push({ node: d });
+            label.nodes.push({ node: d });
+            label.links.push({
+                source: i * 2,
+                target: i * 2 + 1
+            });
+        });
+        var labelLayout = d3.forceSimulation(label.nodes)
+            .force("charge", d3.forceManyBody().strength(-50))
+            .force("link", d3.forceLink(label.links).distance(0).strength(2));
+        var graphLayout = d3.forceSimulation(graph.nodes)
+            .force("charge", d3.forceManyBody().strength(-3000))
+            .force("center", d3.forceCenter(width / 2, height / 2))
+            .force("x", d3.forceX(width / 2).strength(1))
+            .force("y", d3.forceY(height / 2).strength(1))
+            .force("link", d3.forceLink(graph.links).id(function (d) { return d.id; }).distance(50).strength(1))
+            .on("tick", ticked);
+        var adjlist = [];
+        graph.links.forEach(function (d) {
+            adjlist[d.source.index + "-" + d.target.index] = true;
+            adjlist[d.target.index + "-" + d.source.index] = true;
+        });
+        function neigh(a, b) {
+            return a == b || adjlist[a + "-" + b];
+        }
+        var svg = d3.select("#viz").attr("width", width).attr("height", height);
+        var container = svg.append("g");
+        svg.call(
+            d3.zoom()
+                .scaleExtent([.1, 4])
+                .on("zoom", function () { container.attr("transform", d3.event.transform); })
+        );
+        var link = container.append("g").attr("class", "links")
+            .selectAll("line")
+            .data(graph.links)
+            .enter()
+            .append("line")
+            .attr("stroke", "#aaa")
+            .attr("stroke-width", "1px");
+        var node = container.append("g").attr("class", "nodes")
+            .selectAll("g")
+            .data(graph.nodes)
+            .enter()
+            .append("circle")
+            .attr("r", 5)
+            .attr("fill", function (d) { return color(d.group); })
+        node.on("mouseover", focus).on("mouseout", unfocus);
+        node.call(
+            d3.drag()
+                .on("start", dragstarted)
+                .on("drag", dragged)
+                .on("end", dragended)
+        );
+        var labelNode = container.append("g").attr("class", "labelNodes")
+            .selectAll("text")
+            .data(label.nodes)
+            .enter()
+            .append("text")
+            .text(function (d, i) { return i % 2 == 0 ? "" : d.node.id; })
+            .style("fill", "#555")
+            .style("font-family", "Arial")
+            .style("font-size", 14)
+            .style("pointer-events", "none"); // to prevent mouseover/drag capture
+        node.on("mouseover", focus).on("mouseout", unfocus);
+        function ticked() {
+            node.call(updateNode);
+            link.call(updateLink);
+            labelLayout.alphaTarget(0.3).restart();
+            labelNode.each(function (d, i) {
+                if (i % 2 == 0) {
+                    d.x = d.node.x;
+                    d.y = d.node.y;
+                } else {
+                    var b = this.getBBox();
+                    var diffX = d.x - d.node.x;
+                    var diffY = d.y - d.node.y;
+                    var dist = Math.sqrt(diffX * diffX + diffY * diffY);
+                    var shiftX = b.width * (diffX - dist) / (dist * 2);
+                    shiftX = Math.max(-b.width, Math.min(0, shiftX));
+                    var shiftY = 16;
+                    this.setAttribute("transform", "translate(" + shiftX + "," + shiftY + ")");
+                }
+            });
+            labelNode.call(updateNode);
+        }
+        function fixna(x) {
+            if (isFinite(x)) return x;
+            return 0;
+        }
+        function focus(d) {
+            var index = d3.select(d3.event.target).datum().index;
+            node.style("opacity", function (o) {
+                return neigh(index, o.index) ? 1 : 0.1;
+            });
+            labelNode.attr("display", function (o) {
+                return neigh(index, o.node.index) ? "block" : "none";
+            });
+            link.style("opacity", function (o) {
+                return o.source.index == index || o.target.index == index ? 1 : 0.1;
+            });
+        }
+        function unfocus() {
+            labelNode.attr("display", "block");
+            node.style("opacity", 1);
+            link.style("opacity", 1);
+        }
+        function updateLink(link) {
+            link.attr("x1", function (d) { return fixna(d.source.x); })
+                .attr("y1", function (d) { return fixna(d.source.y); })
+                .attr("x2", function (d) { return fixna(d.target.x); })
+                .attr("y2", function (d) { return fixna(d.target.y); });
+        }
+        function updateNode(node) {
+            node.attr("transform", function (d) {
+                return "translate(" + fixna(d.x) + "," + fixna(d.y) + ")";
+            });
+        }
+        function dragstarted(d) {
+            d3.event.sourceEvent.stopPropagation();
+            if (!d3.event.active) graphLayout.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+        }
+        function dragged(d) {
+            d.fx = d3.event.x;
+            d.fy = d3.event.y;
+        }
+        function dragended(d) {
+            if (!d3.event.active) graphLayout.alphaTarget(0);
+            d.fx = null;
+            d.fy = null;
+        }
+    });
+
+        }
+    </script>
+</body>
