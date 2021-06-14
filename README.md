@@ -113,7 +113,7 @@ Along this section, the application functionalities and features will be approac
 
 - As another element of the application, the _tweet box_ shows the textual contents of the most retweeted _tweets_ every second in a scrolling box.
 - Besides the _tweet content_, it shows its date and time posted in brackets.
-- It is also possible to access the _tweet addres_ by clicking on the highlighted "LINK" under its content.
+- It is also possible to access the _tweet address_ by clicking on the highlighted "LINK" under its content.
 
 ![alt text](https://media.discordapp.net/attachments/830590281966682193/842865515357798460/tweets.png)
 
