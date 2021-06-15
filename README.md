@@ -28,7 +28,7 @@ To operate the Peakvis, it is necessary to have the minimum requirements listed 
 - MacOS
 - GNU (Linux OS)
 - Python 3.0 64-bit version
-
+- pip (in Python 3.4 or superior, pip is already built-in)
 ## Installation
 
 To install the Peakvis project, you can either download the compressed folder or clone the repository.
