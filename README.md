@@ -74,7 +74,7 @@ After inserting the two files that you need to run the program, go to folder pat
 python server.py
 ```
 - There is a chance you need to use the python3 command instead of python.
-- After that, the application will then be available at the following address: http://127.0.0.1:5000/
+- After that, the application will then be available at the following address: http://127.0.0.1:5000/.
 - Write the name of your data and video file in the indicated textboxes.
 - By default, the demo files are already configured, but you can change them just by rewriting.
 - **Both of the file names must contain the file type in the end (.json and .mp4, for example).**
