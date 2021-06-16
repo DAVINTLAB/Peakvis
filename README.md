@@ -24,11 +24,13 @@ PeakVis is a visualization tool that allows uploading a recorded video of a live
 To operate the Peakvis, it is necessary to have the minimum requirements listed below:
 
 - OS:
-- Windows 7 or superior
-- MacOS
-- GNU (Linux OS)
+  - Windows 7 or superior
+  - MacOS
+  - GNU (Linux OS)
+- Preferencially browsers based on Chromium (such as Chrome, Edge and Opera)
 - Python 3.0 64-bit version
 - pip (in Python 3.4 or superior, pip is already built-in)
+
 ## Installation
 
 To install the Peakvis project, you can either download the compressed folder or clone the repository.
@@ -38,7 +40,7 @@ After downloading the project, go to the folder path via command prompt and inst
 ```
 pip install -r requirements.txt --user
 ```
-
+If you have both Python 2.x and Python 3.x installed on your machine, consider using 'pip3' instead of 'pip'.
 ## Execution
 
 After installing all dependencies that you need, it is important to know that you need to have two files to run the main application:
@@ -71,12 +73,12 @@ After inserting the two files that you need to run the program, go to folder pat
 ```
 python server.py
 ```
-- There is a chance you need to use the python3 command instead of python
+- There is a chance you need to use the python3 command instead of python.
 - After that, the application will then be available at the following address: http://127.0.0.1:5000/
-- Write the name of your data and video file in the indicated textboxes
-- By default, the demo files are already configured, but you can change them just by rewriting
-- **Both of the file names must contain the file type in the end (.json and .mp4, for example)**
-- Click the Submit button and wait. The application must generate all the visualization elements
+- Write the name of your data and video file in the indicated textboxes.
+- By default, the demo files are already configured, but you can change them just by rewriting.
+- **Both of the file names must contain the file type in the end (.json and .mp4, for example).**
+- Click the Submit button and wait. The application must generate all the visualization elements.
 
 ![alt text](https://media.discordapp.net/attachments/830590281966682193/842879502915731486/submit.png)
 
@@ -128,7 +130,7 @@ Along this section, the application functionalities and features will be approac
 ### Semantic network
 
 - The semantic network connects the most related words between themselves.
-- For example, the more related words to the word "final" are connected by grey lines, then linking words as "kaysar", "edição" and "#bbb18"
+- For example, the more related words to the word "final" are connected by grey lines, then linking words as "kaysar", "edição" and "#bbb18".
 - The graph is generated in real-time, providing a smooth animation along the video time.
 
 ![alt text](https://media.discordapp.net/attachments/830590281966682193/842865964353191996/graphsem.png)
