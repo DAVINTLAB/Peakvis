@@ -27,7 +27,7 @@ To operate the Peakvis, it is necessary to have the minimum requirements listed 
   - Windows 7 or superior
   - MacOS
   - GNU (Linux OS)
-- Preferencially browsers based on Chromium (such as Chrome, Edge and Opera)
+- Preferentially browsers based on Chromium (such as Chrome, Edge and Opera)
 - Python 3.0 64-bit version
 - pip (in Python 3.4 or superior, pip is already built-in)
 
