@@ -164,7 +164,7 @@ Along this section, the application functionalities and features will be approac
 
 ## Citation
 
-Please refer to this work by citing the dissertation indicate below.
+Please refer to this work by citing the paper indicated below.
 
 Pedro Henrique M. Sanvido, Gabriela B. Kurtz, Carlos R. G. Teixeira, Pedro P. Wagner,Lorenzo P. Leuck, Milene S. Silveira, Roberto Tietzmann, Isabel H. Manssour. PeakVis: a Visual Analysis Tool for Social Network Data and Video Broadcasts. IEEE International Conference on Computers, Software and Applicatins (COMPSAC), 2021.
 
